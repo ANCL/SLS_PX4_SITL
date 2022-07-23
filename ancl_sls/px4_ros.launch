@@ -1,11 +1,12 @@
 <launch>
 	<!-- vim: set ft=xml noet : -->
 	<!-- example launch script for PX4 based FCU's -->
-    
+
     <include file="$(find mavros)/launch/px4.launch">
         <!-- GCS link is provided by SITL -->
-        <arg name="gcs_url" value=""/>
-        <arg name="fcu_url" value="$(arg fcu_url)"/>
-        <arg name="respawn_mavros" value="$(arg respawn_mavros)"/>
+        <!-- <arg name="gcs_url" value=""/> -->
+        <arg name="fcu_url" value="udp://:14540@127.0.0.1:14557"/>
+        <!-- <arg name="respawn_mavros" value="$(arg respawn_mavros)"/> -->
     </include>
+
 </launch>
