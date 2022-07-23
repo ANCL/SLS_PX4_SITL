@@ -1,0 +1,8 @@
+prefix=/src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel
+
+Name: offb_control
+Description: Description of offb_control
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
