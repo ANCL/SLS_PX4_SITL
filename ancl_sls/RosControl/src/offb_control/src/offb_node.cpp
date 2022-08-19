@@ -10,6 +10,11 @@
 #include <mavros_msgs/SetMode.h>
 #include <mavros_msgs/State.h>
 
+#include <gazebo_msgs/LinkStates.h>
+#include <std_msgs/String.h>
+#include <std_msgs/Float64.h>
+// #include <tr>
+
 mavros_msgs::State current_state;
 void state_cb(const mavros_msgs::State::ConstPtr& msg){
     current_state = *msg;
@@ -39,9 +44,9 @@ int main(int argc, char **argv)
     }
 
     geometry_msgs::PoseStamped pose;
-    pose.pose.position.x = 1;
-    pose.pose.position.y = 1;
-    pose.pose.position.z = 10;
+    pose.pose.position.x = 5;
+    pose.pose.position.y = 5;
+    pose.pose.position.z = 5;
 
     //send a few setpoints before starting
     for(int i = 100; ros::ok() && i > 0; --i){
