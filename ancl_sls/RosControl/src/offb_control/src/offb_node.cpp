@@ -9,16 +9,28 @@
 #include <mavros_msgs/CommandBool.h>
 #include <mavros_msgs/SetMode.h>
 #include <mavros_msgs/State.h>
+#include <mavros_msgs/ActuatorControl.h>
 
 #include <gazebo_msgs/LinkStates.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float64.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/transform_datatypes.h>
 // #include <tr>
 
 mavros_msgs::State current_state;
 void state_cb(const mavros_msgs::State::ConstPtr& msg){
     current_state = *msg;
 }
+
+struct sls_state {
+    double x, y, z, alpha, beta, roll, pitch, yaw, vx, vy, vz, gamma_alpha, gamma_beta, omega_1, omega_2, omega_3;
+    // /mavros/local_position/pose
+}sls_state1;
+
+void current_position_cb(const geometry_msgs::PoseStamped::ConstPtr& msg);
+
 
 int main(int argc, char **argv)
 {
@@ -27,15 +39,17 @@ int main(int argc, char **argv)
 
     ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>
             ("mavros/state", 10, state_cb);
-    ros::Publisher local_pos_pub = nh.advertise<geometry_msgs::PoseStamped>
-            ("mavros/setpoint_position/local", 10);
+    ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped>
+            ("/mavros/local_position/pose", 1, current_position_cb);
+    // ros::Publisher local_pos_pub = nh.advertise<geometry_msgs::PoseStamped> ("mavros/setpoint_position/local", 10);
+    ros::Publisher actuator_setpoint_pub = nh.advertise<mavros_msgs::ActuatorControl> ("/mavros/actuator_control", 1000);
     ros::ServiceClient arming_client = nh.serviceClient<mavros_msgs::CommandBool>
             ("mavros/cmd/arming");
     ros::ServiceClient set_mode_client = nh.serviceClient<mavros_msgs::SetMode>
             ("mavros/set_mode");
 
     //the setpoint publishing rate MUST be faster than 2Hz
-    ros::Rate rate(20.0);
+    ros::Rate rate(1000);
 
     // wait for FCU connection
     while(ros::ok() && !current_state.connected){
@@ -43,14 +57,38 @@ int main(int argc, char **argv)
         rate.sleep();
     }
 
-    geometry_msgs::PoseStamped pose;
-    pose.pose.position.x = 5;
-    pose.pose.position.y = 5;
-    pose.pose.position.z = 5;
+    // geometry_msgs::PoseStamped pose;
+    // pose.pose.position.x = 5;
+    // pose.pose.position.y = 5;
+    // pose.pose.position.z = 5;
+
+    mavros_msgs::ActuatorControl actuator_setpoint;
+    actuator_setpoint.group_mix = 0;
+    actuator_setpoint.controls[0] = 0;
+    actuator_setpoint.controls[1] = 0;
+    actuator_setpoint.controls[2] = 0;
+    // std::cout<< actuator_setpoint.controls[2];
+    actuator_setpoint.controls[3] = (10-sls_state1.z)/10 * 0.2+0.7;
+    actuator_setpoint.controls[4] = 0;
+    actuator_setpoint.controls[5] = 0;
+    actuator_setpoint.controls[6] = 0;
+    actuator_setpoint.controls[7] = 0;
 
     //send a few setpoints before starting
     for(int i = 100; ros::ok() && i > 0; --i){
-        local_pos_pub.publish(pose);
+        // local_pos_pub.publish(pose);
+        actuator_setpoint.group_mix = 0;
+        actuator_setpoint.controls[0] = 0;
+        actuator_setpoint.controls[1] = 0;
+        actuator_setpoint.controls[2] = 0;
+        // std::cout<< actuator_setpoint.controls[2];
+        actuator_setpoint.controls[3] = (10-sls_state1.z)/10 * 0.2+0.7;
+        actuator_setpoint.controls[4] = 0;
+        actuator_setpoint.controls[5] = 0;
+        actuator_setpoint.controls[6] = 0;
+        actuator_setpoint.controls[7] = 0;
+        actuator_setpoint_pub.publish(actuator_setpoint);
+        ROS_INFO_STREAM(actuator_setpoint.controls[3]);
         ros::spinOnce();
         rate.sleep();
     }
@@ -82,11 +120,47 @@ int main(int argc, char **argv)
             }
         }
 
-        local_pos_pub.publish(pose);
+
+        actuator_setpoint.group_mix = 0;
+        actuator_setpoint.controls[0] = 0;
+        actuator_setpoint.controls[1] = 0;
+        actuator_setpoint.controls[2] = 0;
+        actuator_setpoint.controls[3] = (10-sls_state1.z)/10 * 0.1+0.7;
+        actuator_setpoint.controls[4] = 0;
+        actuator_setpoint.controls[5] = 0;
+        actuator_setpoint.controls[6] = 0;
+        actuator_setpoint.controls[7] = 0;
+        // local_pos_pub.publish(pose);
+        actuator_setpoint_pub.publish(actuator_setpoint);
 
         ros::spinOnce();
         rate.sleep();
     }
 
     return 0;
+}
+
+
+void current_position_cb(const geometry_msgs::PoseStamped::ConstPtr& msg){
+
+    sls_state1.x = msg -> pose.position.x;
+    sls_state1.y = msg -> pose.position.y;
+    sls_state1.z = msg -> pose.position.z;
+    //quaternion to r p y
+    double quatx = msg->pose.orientation.x;
+    double quaty = msg->pose.orientation.y;
+    double quatz = msg->pose.orientation.z;
+    double quatw = msg->pose.orientation.w;
+
+    // ROS_INFO_STREAM("quad position x" << sls_state1.x  << "y" << sls_state1.y << "z" << sls_state1.z << "Quotenion: " << quatx << quaty << quatz << quatw );
+
+    // need sequency: pitch(y) roll(x) yaw(z)
+    // tf2::Quaternion q(quatx,quaty,quatz,quatw);
+    // tf2::Matrix3x3 m(q);
+    // double roll, pitch, yaw;
+    // m.getRPY(roll, pitch, yaw);
+
+    // ROS_INFO_STREAM("quad position: " <<" x: " << msg ->pose.position.x << " y: "<< msg ->pose.position.y << " z: " << msg ->pose.position.z);
+//     tf2::Ma
+//     m.getRPY(sls_state1.roll, sls_state1.pitch, sls_state1.yaw);
 }

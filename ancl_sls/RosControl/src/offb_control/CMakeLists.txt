@@ -11,10 +11,14 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   mavros
   roscpp
+  tf2
+  tf2_ros
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+# find_package(Eigen REQUIRED)
+include_directories("/usr/include/eigen3")
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -83,8 +87,7 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add a build_depend and a exec_depend tag for "dynamic_reconfigure"
 ## * In this file (CMakeLists.txt):
 ##   * add "dynamic_reconfigure" to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * uncomment the "generate_dynamic_reconfigure_options" section below
+##     find_package(catkA Collision-Free MPC for Whole-Body Dyn"generate_dynamic_reconfigure_options" section below
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
@@ -118,6 +121,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  ${Eigen_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -134,6 +138,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(offb_control_node src/offb_node.cpp)
+add_executable(get_states_node src/getStates.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -151,6 +156,7 @@ add_executable(offb_control_node src/offb_node.cpp)
 # )
 
 target_link_libraries(offb_control_node ${catkin_LIBRARIES})
+target_link_libraries(get_states_node ${catkin_LIBRARIES})
 
 
 #############

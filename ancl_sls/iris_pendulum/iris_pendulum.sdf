@@ -1,5 +1,6 @@
 <?xml version='1.0'?>
 <sdf version='1.6'>
+  <enable_lockstep>false</enable_lockstep>
   <model name='iris_pendulum'>
   <static>false</static>
   <include>
