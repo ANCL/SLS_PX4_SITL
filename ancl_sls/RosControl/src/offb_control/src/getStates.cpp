@@ -143,11 +143,11 @@ void gazebo_state_cb(const gazebo_msgs::LinkStates::ConstPtr& msg){
 
     double g_alpha, g_beta;
     g_beta = (loadtwist.linear.x - quadtwist.linear.x)/std::cos(sls_state1.beta);
-    g_alpha = (loadtwist.linear.x - quadtwist.linear.x - std::sin(sls_state1.alpha)*std::sin(sls_state1.beta)*g_beta)/(-std::cos(sls_state1.alpha)*std::cos(sls_state1.beta));
+    g_alpha = (loadtwist.linear.y - quadtwist.linear.y - std::sin(sls_state1.alpha)*std::sin(sls_state1.beta)*g_beta)/(-std::cos(sls_state1.alpha)*std::cos(sls_state1.beta));
 
     sls_state1.gamma_alpha = g_alpha;
     sls_state1.gamma_beta = g_beta;
-    // ROS_INFO_STREAM(sls_state1.alpha << "  "<<sls_state1.beta << "  "<<sls_state1.gamma_alpha<< " cos alpha: " << cos(sls_state1.alpha) << " gamma_beta: "<<sls_state1.gamma_beta);
+    ROS_INFO_STREAM(sls_state1.alpha << "  "<<sls_state1.beta << "  "<<sls_state1.gamma_alpha<< " cos alpha: " << cos(sls_state1.alpha) << " gamma_beta: "<<sls_state1.gamma_beta);
     // ROS_INFO_STREAM("gamme_alpha: " << sls_state1.gamma_alpha << "  " << g_alpha <<  "  gamma_beta: " << sls_state1.gamma_beta << "  " << g_beta);
 
     // for (int x=0;x<3;x++){
