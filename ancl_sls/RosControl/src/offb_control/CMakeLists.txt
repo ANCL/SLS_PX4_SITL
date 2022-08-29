@@ -158,6 +158,10 @@ add_executable(get_states_node src/getStates.cpp)
 target_link_libraries(offb_control_node ${catkin_LIBRARIES})
 target_link_libraries(get_states_node ${catkin_LIBRARIES})
 
+add_subdirectory(src/QuasiController)
+target_link_libraries(get_states_node quasicontrol)
+# target_link_directories(get_states_node PUBLIC src/QuasiController/)
+# target_link_directories(test PUBLIC libs/)
 
 #############
 ## Install ##
