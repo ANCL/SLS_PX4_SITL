@@ -9,13 +9,14 @@
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2/transform_datatypes.h>
 #include <Eigen/Dense>
+#include <offb_control/slsStates.h>
 // #include <QuasiController.h>
 
 struct PendulumAngles {
     double alpha, beta; // roll(alpha) pitch(beta) yaw
 }penangle,penangle2;
 
-void current_position_cb(const geometry_msgs::PoseStamped::ConstPtr& msg);
+// void current_position_cb(const geometry_msgs::PoseStamped::ConstPtr& msg);
 void gazebo_state_cb(const gazebo_msgs::LinkStates::ConstPtr& msg);
 
 PendulumAngles ToPenAngles(double Lx,double Ly,double Lz);
@@ -39,51 +40,70 @@ int main(int argc, char **argv){
 	ros::init(argc, argv, "listener");
 	ros::NodeHandle nh;
 
-	ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped>
-            ("/mavros/local_position/pose", 50, current_position_cb);
+	// ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped>
+    //         ("/mavros/local_position/pose", 50, current_position_cb);
 	ros::Subscriber gazebo_state_sub = nh.subscribe<gazebo_msgs::LinkStates>
             ("gazebo/link_states", 50, gazebo_state_cb);
     // ros::Publisher sls_state_topic = nh.
     // ros::Publisher actuator_setpoint_pub = nh.advertise<mavros_msgs::ActuatorControl> ("/mavros/actuator_control", 1000);
-    //  ros::Publisher sls_state_publish = nh.advertise<sls_state> ("/sls_state", 1000);
-    // ros::Rate rate(0.1);
-	ros::spin();
 
+     ros::Publisher sls_state_publish = nh.advertise<offb_control::slsStates> ("/offb_control/slsStates", 1000);
+    ros::Rate rate(500);
+	// ros::spin();
+    offb_control::slsStates slsStatesPub;
+    slsStatesPub.sls_states = {0};
 
 	while(ros::ok()){
-
+        slsStatesPub.sls_states[0] = sls_state1.x;
+        slsStatesPub.sls_states[1] = sls_state1.y;
+        slsStatesPub.sls_states[2] = sls_state1.z;
+        slsStatesPub.sls_states[3] = sls_state1.alpha;
+        slsStatesPub.sls_states[4] = sls_state1.beta;
+        slsStatesPub.sls_states[5] = sls_state1.roll;
+        slsStatesPub.sls_states[6] = sls_state1.pitch;
+        slsStatesPub.sls_states[7] = sls_state1.yaw;
+        slsStatesPub.sls_states[8] = sls_state1.vx;
+        slsStatesPub.sls_states[9] = sls_state1.vy;
+        slsStatesPub.sls_states[10] = sls_state1.vz;
+        slsStatesPub.sls_states[11] = sls_state1.gamma_alpha;
+        slsStatesPub.sls_states[12] = sls_state1.gamma_beta;
+        slsStatesPub.sls_states[13] = sls_state1.omega_1;
+        slsStatesPub.sls_states[14] = sls_state1.omega_2;
+        slsStatesPub.sls_states[15] = sls_state1.omega_3;
+        sls_state_publish.publish(slsStatesPub);
+        ros::spinOnce();
 	}
 	return 0;
 }
 
-void current_position_cb(const geometry_msgs::PoseStamped::ConstPtr& msg){
+// void current_position_cb(const geometry_msgs::PoseStamped::ConstPtr& msg){
 
-    sls_state1.x = msg -> pose.position.x;
-    sls_state1.y = msg -> pose.position.y;
-    sls_state1.z = msg -> pose.position.z;
-    //quaternion to r p y
-    double quatx = msg->pose.orientation.x;
-    double quaty = msg->pose.orientation.y;
-    double quatz = msg->pose.orientation.z;
-    double quatw = msg->pose.orientation.w;
+//     sls_state1.x = msg -> pose.position.x;
+//     sls_state1.y = msg -> pose.position.y;
+//     sls_state1.z = msg -> pose.position.z;
+//     //quaternion to r p y
+//     double quatx = msg->pose.orientation.x;
+//     double quaty = msg->pose.orientation.y;
+//     double quatz = msg->pose.orientation.z;
+//     double quatw = msg->pose.orientation.w;
 
-    // ROS_INFO_STREAM("quad position x" << sls_state1.x  << "y" << sls_state1.y << "z" << sls_state1.z << "Quotenion: " << quatx << quaty << quatz << quatw );
+//     // ROS_INFO_STREAM("quad position x" << sls_state1.x  << "y" << sls_state1.y << "z" << sls_state1.z << "Quotenion: " << quatx << quaty << quatz << quatw );
 
-    // need sequency: pitch(y) roll(x) yaw(z)ROS_INFO_STREAM()
-    tf2::Quaternion q(quatx,quaty,quatz,quatw);
-    tf2::Matrix3x3 m(q);
-    double roll, pitch, yaw;
-    m.getRPY(roll, pitch, yaw);
-    sls_state1.roll = roll;
-    sls_state1.pitch = pitch;
-    sls_state1.yaw = yaw;
+//     // need sequency: pitch(y) roll(x) yaw(z)ROS_INFO_STREAM()
+//     tf2::Quaternion q(quatx,quaty,quatz,quatw);
+//     tf2::Matrix3x3 m(q);
+//     double roll, pitch, yaw;
+//     m.getRPY(roll, pitch, yaw);
+//     sls_state1.roll = roll;
+//     sls_state1.pitch = pitch;
+//     sls_state1.yaw = yaw;
 
-    // sls_state1.
+//     // sls_state1.
 
-    // ROS_INFO_STREAM("quad position: " <<" x: " << msg ->pose.position.x << " y: "<< msg ->pose.position.y << " z: " << msg ->pose.position.z);
-//     tf2::Ma
-//     m.getRPY(sls_state1.roll, sls_state1.pitch, sls_state1.yaw);
-}
+//     // ROS_INFO_STREAM("quad position: " <<" x: " << msg ->pose.position.x << " y: "<< msg ->pose.position.y << " z: " << msg ->pose.position.z);
+// //     tf2::Ma
+// //     m.getRPY(sls_state1.roll, sls_state1.pitch, sls_state1.yaw);
+// }
 
 void gazebo_state_cb(const gazebo_msgs::LinkStates::ConstPtr& msg){
     //ROS_INFO("I heard: [%s\n]", msg->name);
@@ -148,7 +168,7 @@ void gazebo_state_cb(const gazebo_msgs::LinkStates::ConstPtr& msg){
 
     sls_state1.gamma_alpha = g_alpha;
     sls_state1.gamma_beta = g_beta;
-    ROS_INFO_STREAM(sls_state1.alpha << "  "<<sls_state1.beta << "  "<<sls_state1.gamma_alpha<< " cos alpha: " << cos(sls_state1.alpha) << " gamma_beta: "<<sls_state1.gamma_beta);
+    // ROS_INFO_STREAM(sls_state1.alpha << "  "<<sls_state1.beta << "  "<<sls_state1.gamma_alpha<< " cos alpha: " << cos(sls_state1.alpha) << " gamma_beta: "<<sls_state1.gamma_beta);
     // ROS_INFO_STREAM("gamme_alpha: " << sls_state1.gamma_alpha << "  " << g_alpha <<  "  gamma_beta: " << sls_state1.gamma_beta << "  " << g_beta);
 
     // for (int x=0;x<3;x++){
@@ -164,6 +184,7 @@ void gazebo_state_cb(const gazebo_msgs::LinkStates::ConstPtr& msg){
     // sls_state1.gamma_alpha << " gamma_beta: "<<sls_state1.gamma_beta <<
 
 //      ROS_INFO_STREAM("load position" << Lx  << Ly << Lz );
+
 }
 
 

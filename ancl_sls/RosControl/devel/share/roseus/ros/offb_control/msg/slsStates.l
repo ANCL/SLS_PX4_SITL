@@ -1,0 +1,102 @@
+;; Auto-generated. Do not edit!
+
+
+(when (boundp 'offb_control::slsStates)
+  (if (not (find-package "OFFB_CONTROL"))
+    (make-package "OFFB_CONTROL"))
+  (shadow 'slsStates (find-package "OFFB_CONTROL")))
+(unless (find-package "OFFB_CONTROL::SLSSTATES")
+  (make-package "OFFB_CONTROL::SLSSTATES"))
+
+(in-package "ROS")
+;;//! \htmlinclude slsStates.msg.html
+(if (not (find-package "STD_MSGS"))
+  (ros::roseus-add-msgs "std_msgs"))
+
+
+(defclass offb_control::slsStates
+  :super ros::object
+  :slots (_header _sls_states ))
+
+(defmethod offb_control::slsStates
+  (:init
+   (&key
+    ((:header __header) (instance std_msgs::Header :init))
+    ((:sls_states __sls_states) (make-array 16 :initial-element 0.0 :element-type :float))
+    )
+   (send-super :init)
+   (setq _header __header)
+   (setq _sls_states __sls_states)
+   self)
+  (:header
+   (&rest __header)
+   (if (keywordp (car __header))
+       (send* _header __header)
+     (progn
+       (if __header (setq _header (car __header)))
+       _header)))
+  (:sls_states
+   (&optional __sls_states)
+   (if __sls_states (setq _sls_states __sls_states)) _sls_states)
+  (:serialization-length
+   ()
+   (+
+    ;; std_msgs/Header _header
+    (send _header :serialization-length)
+    ;; float32[16] _sls_states
+    (* 4    16)
+    ))
+  (:serialize
+   (&optional strm)
+   (let ((s (if strm strm
+              (make-string-output-stream (send self :serialization-length)))))
+     ;; std_msgs/Header _header
+       (send _header :serialize s)
+     ;; float32[16] _sls_states
+     (dotimes (i 16)
+       (sys::poke (elt _sls_states i) (send s :buffer) (send s :count) :float) (incf (stream-count s) 4)
+       )
+     ;;
+     (if (null strm) (get-output-stream-string s))))
+  (:deserialize
+   (buf &optional (ptr- 0))
+   ;; std_msgs/Header _header
+     (send _header :deserialize buf ptr-) (incf ptr- (send _header :serialization-length))
+   ;; float32[16] _sls_states
+   (dotimes (i (length _sls_states))
+     (setf (elt _sls_states i) (sys::peek buf ptr- :float)) (incf ptr- 4)
+     )
+   ;;
+   self)
+  )
+
+(setf (get offb_control::slsStates :md5sum-) "8e8b90aa21ef275a3fe952188f9f137d")
+(setf (get offb_control::slsStates :datatype-) "offb_control/slsStates")
+(setf (get offb_control::slsStates :definition-)
+      "#sls_state
+std_msgs/Header header
+float32[16] sls_states
+
+================================================================================
+MSG: std_msgs/Header
+# Standard metadata for higher-level stamped data types.
+# This is generally used to communicate timestamped data 
+# in a particular coordinate frame.
+# 
+# sequence ID: consecutively increasing ID 
+uint32 seq
+#Two-integer timestamp that is expressed as:
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')
+# time-handling sugar is provided by the client library
+time stamp
+#Frame this data is associated with
+string frame_id
+
+")
+
+
+
+(provide :offb_control/slsStates "8e8b90aa21ef275a3fe952188f9f137d")
+
+

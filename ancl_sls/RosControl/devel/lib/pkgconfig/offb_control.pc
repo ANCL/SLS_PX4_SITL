@@ -3,6 +3,6 @@ prefix=/src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel
 Name: offb_control
 Description: Description of offb_control
 Version: 0.0.0
-Cflags: 
+Cflags: -I/src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/include
 Libs: -L${prefix}/lib 
-Requires: 
+Requires: geometry_msgs macros roscpp message_runtime

@@ -13,6 +13,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf2
   tf2_ros
+  std_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -56,6 +58,10 @@ include_directories("/usr/include/eigen3")
 #   Message1.msg
 #   Message2.msg
 # )
+add_message_files(
+  FILES
+  slsStates.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -72,10 +78,11 @@ include_directories("/usr/include/eigen3")
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   geometry_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  geometry_msgs
+  std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -108,7 +115,11 @@ include_directories("/usr/include/eigen3")
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES Offb_Control
-#  CATKIN_DEPENDS geometry_msgs macros roscpp
+ CATKIN_DEPENDS
+ geometry_msgs
+ macros
+ roscpp
+ message_runtime
 #  DEPENDS system_lib
 )
 

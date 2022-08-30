@@ -71,13 +71,19 @@
     <gravity>1</gravity>
   </link>
 
-  <joint name='load_joint' type='universal'>
+  <joint name='load_joint' type='revolute2'>
     <pose>0 0 0 0 0 0</pose>
+    <axis>
+      <xyz>1 0 0</xyz>
+    </axis>
+    <axis2>
+      <xyz>0 1 0</xyz>
+    </axis2>
     <child>load</child>
     <parent>pendulum</parent>
   </joint>
 
-  <joint name='pendulum_joint' type='universal'>
+  <joint name='pendulum_joint' type='ball'>
     <pose>0 0 -0.5 0 0 0</pose>
     <child>pendulum</child>
     <parent>iris::base_link</parent>

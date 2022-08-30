@@ -41,7 +41,7 @@ int main(int argc, char **argv)
             ("mavros/state", 10, state_cb);
     ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped>
             ("/mavros/local_position/pose", 1, current_position_cb);
-    // ros::Publisher local_pos_pub = nh.advertise<geometry_msgs::PoseStamped> ("mavros/setpoint_position/local", 10);
+    // ros::Publisher local_pos_pub = nh.advertise<geometry_msgs::PoseStamp ed> ("mavros/setpoint_position/local", 10);
     ros::Publisher actuator_setpoint_pub = nh.advertise<mavros_msgs::ActuatorControl> ("/mavros/actuator_control", 1000);
     ros::ServiceClient arming_client = nh.serviceClient<mavros_msgs::CommandBool>
             ("mavros/cmd/arming");

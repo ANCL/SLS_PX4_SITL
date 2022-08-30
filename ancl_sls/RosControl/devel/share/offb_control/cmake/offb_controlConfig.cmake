@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(offb_control_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT " " STREQUAL " ")
+if(NOT "/src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/include " STREQUAL " ")
   set(offb_control_INCLUDE_DIRS "")
-  set(_include_dirs "")
+  set(_include_dirs "/src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/include")
   if(NOT " " STREQUAL " ")
     set(_report "Check the issue tracker '' and consider creating a ticket if the problem has not been reported yet.")
   elseif(NOT " " STREQUAL " ")
@@ -177,7 +177,7 @@ foreach(library ${libraries})
   endif()
 endforeach()
 
-set(offb_control_EXPORTED_TARGETS "")
+set(offb_control_EXPORTED_TARGETS "offb_control_generate_messages_cpp;offb_control_generate_messages_eus;offb_control_generate_messages_lisp;offb_control_generate_messages_nodejs;offb_control_generate_messages_py")
 # create dummy targets for exported code generation targets to make life of users easier
 foreach(t ${offb_control_EXPORTED_TARGETS})
   if(NOT TARGET ${t})
@@ -185,7 +185,7 @@ foreach(t ${offb_control_EXPORTED_TARGETS})
   endif()
 endforeach()
 
-set(depends "")
+set(depends "geometry_msgs;macros;roscpp;message_runtime")
 foreach(depend ${depends})
   string(REPLACE " " ";" depend_list ${depend})
   # the package name of the dependency must be kept in a unique variable so that it is not overwritten in recursive calls
@@ -214,7 +214,7 @@ foreach(depend ${depends})
   list(APPEND offb_control_EXPORTED_TARGETS ${${offb_control_dep}_EXPORTED_TARGETS})
 endforeach()
 
-set(pkg_cfg_extras "")
+set(pkg_cfg_extras "offb_control-msg-extras.cmake")
 foreach(extra ${pkg_cfg_extras})
   if(NOT IS_ABSOLUTE ${extra})
     set(extra ${offb_control_DIR}/${extra})
