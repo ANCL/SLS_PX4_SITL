@@ -9,12 +9,12 @@ import struct
 import std_msgs.msg
 
 class slsStates(genpy.Message):
-  _md5sum = "8e8b90aa21ef275a3fe952188f9f137d"
+  _md5sum = "f3e31fbaa1359dc8029965f13b7710fe"
   _type = "offb_control/slsStates"
   _has_header = True  # flag to mark the presence of a Header object
   _full_text = """#sls_state
 std_msgs/Header header
-float32[16] sls_states
+float64[16] sls_states
 
 ================================================================================
 MSG: std_msgs/Header
@@ -33,7 +33,7 @@ time stamp
 string frame_id
 """
   __slots__ = ['header','sls_states']
-  _slot_types = ['std_msgs/Header','float32[16]']
+  _slot_types = ['std_msgs/Header','float64[16]']
 
   def __init__(self, *args, **kwds):
     """
@@ -80,7 +80,7 @@ string frame_id
         _x = _x.encode('utf-8')
         length = len(_x)
       buff.write(struct.Struct('<I%ss'%length).pack(length, _x))
-      buff.write(_get_struct_16f().pack(*self.sls_states))
+      buff.write(_get_struct_16d().pack(*self.sls_states))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -109,8 +109,8 @@ string frame_id
       else:
         self.header.frame_id = str[start:end]
       start = end
-      end += 64
-      self.sls_states = _get_struct_16f().unpack(str[start:end])
+      end += 128
+      self.sls_states = _get_struct_16d().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -161,8 +161,8 @@ string frame_id
       else:
         self.header.frame_id = str[start:end]
       start = end
-      end += 64
-      self.sls_states = numpy.frombuffer(str[start:end], dtype=numpy.float32, count=16)
+      end += 128
+      self.sls_states = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=16)
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -171,12 +171,12 @@ _struct_I = genpy.struct_I
 def _get_struct_I():
     global _struct_I
     return _struct_I
-_struct_16f = None
-def _get_struct_16f():
-    global _struct_16f
-    if _struct_16f is None:
-        _struct_16f = struct.Struct("<16f")
-    return _struct_16f
+_struct_16d = None
+def _get_struct_16d():
+    global _struct_16d
+    if _struct_16d is None:
+        _struct_16d = struct.Struct("<16d")
+    return _struct_16d
 _struct_3I = None
 def _get_struct_3I():
     global _struct_3I

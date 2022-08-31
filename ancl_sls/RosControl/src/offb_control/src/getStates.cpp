@@ -10,7 +10,112 @@
 #include <tf2/transform_datatypes.h>
 #include <Eigen/Dense>
 #include <offb_control/slsStates.h>
-// #include <QuasiController.h>
+
+#include <QuasiController.h>
+#include "rtwtypes.h"
+#include <cstddef>
+#include <cstdlib>
+
+// ------------------------------------------------------------------------------------------------------------------
+
+static void argInit_1x16_real_T(double result[16]);
+
+static void argInit_1x2_real_T(double result[2]);
+
+static void argInit_1x3_real_T(double result[3]);
+
+static void argInit_1x6_real_T(double result[6]);
+
+static double argInit_real_T();
+
+static void main_QuasiController(double dv[16], double dv2[6], double controller_output[4], double dv3[3], double dv1[2]);
+
+// Function Definitions
+//
+// Arguments    : double result[16]
+// Return Type  : void
+//
+static void argInit_1x16_real_T(double result[16])
+{
+  // Loop over the array to initialize each element.
+  for (int idx1{0}; idx1 < 16; idx1++) {
+    // Set the value of the array element.
+    // Change this value to the value that the application requires.
+    result[idx1] = argInit_real_T();
+  }
+}
+
+//
+// Arguments    : double result[2]
+// Return Type  : void
+//
+static void argInit_1x2_real_T(double result[2])
+{
+  // Loop over the array to initialize each element.
+  for (int idx1{0}; idx1 < 2; idx1++) {
+    // Set the value of the array element.
+    // Change this value to the value that the application requires.
+    result[idx1] = argInit_real_T();
+  }
+}
+
+//
+// Arguments    : double result[3]
+// Return Type  : void
+//
+static void argInit_1x3_real_T(double result[3])
+{
+  // Loop over the array to initialize each element.
+  for (int idx1{0}; idx1 < 3; idx1++) {
+    // Set the value of the array element.
+    // Change this value to the value that the application requires.
+    result[idx1] = argInit_real_T();
+  }
+}
+
+//
+// Arguments    : double result[6]
+// Return Type  : void
+//
+static void argInit_1x6_real_T(double result[6])
+{
+  // Loop over the array to initialize each element.
+  for (int idx1{0}; idx1 < 6; idx1++) {
+    // Set the value of the array element.
+    // Change this value to the value that the application requires.
+    result[idx1] = argInit_real_T();
+  }
+}
+
+//
+// Arguments    : void
+// Return Type  : double
+//
+static double argInit_real_T()
+{
+  return 0.0;
+}
+
+//
+// Arguments    : void
+// Return Type  : void
+//
+static void main_QuasiController(double dv[16], double dv2[6], double controller_output[4], double dv3[3], double dv1[2])
+{
+  // Initialize function 'QuasiController' input arguments.
+  // Initialize function input argument 'x'.
+  // Initialize function input argument 'Kv2'.
+  // Initialize function input argument 'Kv6'.
+  // Initialize function input argument 'M'.
+  // Call the entry-point 'QuasiController'.
+  // argInit_1x16_real_T(dv);
+  // argInit_1x2_real_T(dv1);
+  // argInit_1x6_real_T(dv2);
+  // argInit_1x3_real_T(dv3);
+  QuasiController(dv, dv1, dv2, dv3, controller_output);
+}
+
+// ------------------------------------------------------------------------------------------
 
 struct PendulumAngles {
     double alpha, beta; // roll(alpha) pitch(beta) yaw
@@ -40,6 +145,12 @@ int main(int argc, char **argv){
 	ros::init(argc, argv, "listener");
 	ros::NodeHandle nh;
 
+
+  double dv[16] = {};
+  double dv2[6] = {3.162277660169037e+03,4.790583473550029e+03,3.470550719426292e+03,1.366677835196229e+03,3.240775203934431e+02,40.597475793291565};
+  double controller_output[4] = {};
+  double dv3[3] = {1.6,0.16,1};
+  double dv1[2] = {10,5.4772};
 	// ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped>
     //         ("/mavros/local_position/pose", 50, current_position_cb);
 	ros::Subscriber gazebo_state_sub = nh.subscribe<gazebo_msgs::LinkStates>
@@ -71,6 +182,13 @@ int main(int argc, char **argv){
         slsStatesPub.sls_states[14] = sls_state1.omega_2;
         slsStatesPub.sls_states[15] = sls_state1.omega_3;
         sls_state_publish.publish(slsStatesPub);
+        for (int i=0;i<16; i++){
+          dv[i] = slsStatesPub.sls_states[i];
+          // ROS_INFO_STREAM( "dv[i]: "<< i << " : " << dv[i] << "\n");
+        }
+        // ROS_INFO_STREAM( "First: "<< controller_output[0] << "\n");
+        main_QuasiController( dv, dv2, controller_output, dv3, dv1);
+        ROS_INFO_STREAM( "Second: "<< controller_output[0] << "\n");
         ros::spinOnce();
 	}
 	return 0;

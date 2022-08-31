@@ -41,7 +41,7 @@ struct slsStates_
    typedef  ::std_msgs::Header_<ContainerAllocator>  _header_type;
   _header_type header;
 
-   typedef boost::array<float, 16>  _sls_states_type;
+   typedef boost::array<double, 16>  _sls_states_type;
   _sls_states_type sls_states;
 
 
@@ -131,12 +131,12 @@ struct MD5Sum< ::offb_control::slsStates_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "8e8b90aa21ef275a3fe952188f9f137d";
+    return "f3e31fbaa1359dc8029965f13b7710fe";
   }
 
   static const char* value(const ::offb_control::slsStates_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x8e8b90aa21ef275aULL;
-  static const uint64_t static_value2 = 0x3fe952188f9f137dULL;
+  static const uint64_t static_value1 = 0xf3e31fbaa1359dc8ULL;
+  static const uint64_t static_value2 = 0x029965f13b7710feULL;
 };
 
 template<class ContainerAllocator>
@@ -157,7 +157,7 @@ struct Definition< ::offb_control::slsStates_<ContainerAllocator> >
   {
     return "#sls_state\n"
 "std_msgs/Header header\n"
-"float32[16] sls_states\n"
+"float64[16] sls_states\n"
 "\n"
 "================================================================================\n"
 "MSG: std_msgs/Header\n"
@@ -219,7 +219,7 @@ struct Printer< ::offb_control::slsStates_<ContainerAllocator> >
     for (size_t i = 0; i < v.sls_states.size(); ++i)
     {
       s << indent << "  sls_states[" << i << "]: ";
-      Printer<float>::stream(s, indent + "  ", v.sls_states[i]);
+      Printer<double>::stream(s, indent + "  ", v.sls_states[i]);
     }
   }
 };

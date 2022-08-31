@@ -43,8 +43,8 @@
    (+
     ;; std_msgs/Header _header
     (send _header :serialization-length)
-    ;; float32[16] _sls_states
-    (* 4    16)
+    ;; float64[16] _sls_states
+    (* 8    16)
     ))
   (:serialize
    (&optional strm)
@@ -52,9 +52,9 @@
               (make-string-output-stream (send self :serialization-length)))))
      ;; std_msgs/Header _header
        (send _header :serialize s)
-     ;; float32[16] _sls_states
+     ;; float64[16] _sls_states
      (dotimes (i 16)
-       (sys::poke (elt _sls_states i) (send s :buffer) (send s :count) :float) (incf (stream-count s) 4)
+       (sys::poke (elt _sls_states i) (send s :buffer) (send s :count) :double) (incf (stream-count s) 8)
        )
      ;;
      (if (null strm) (get-output-stream-string s))))
@@ -62,20 +62,20 @@
    (buf &optional (ptr- 0))
    ;; std_msgs/Header _header
      (send _header :deserialize buf ptr-) (incf ptr- (send _header :serialization-length))
-   ;; float32[16] _sls_states
+   ;; float64[16] _sls_states
    (dotimes (i (length _sls_states))
-     (setf (elt _sls_states i) (sys::peek buf ptr- :float)) (incf ptr- 4)
+     (setf (elt _sls_states i) (sys::peek buf ptr- :double)) (incf ptr- 8)
      )
    ;;
    self)
   )
 
-(setf (get offb_control::slsStates :md5sum-) "8e8b90aa21ef275a3fe952188f9f137d")
+(setf (get offb_control::slsStates :md5sum-) "f3e31fbaa1359dc8029965f13b7710fe")
 (setf (get offb_control::slsStates :datatype-) "offb_control/slsStates")
 (setf (get offb_control::slsStates :definition-)
       "#sls_state
 std_msgs/Header header
-float32[16] sls_states
+float64[16] sls_states
 
 ================================================================================
 MSG: std_msgs/Header
@@ -97,6 +97,6 @@ string frame_id
 
 
 
-(provide :offb_control/slsStates "8e8b90aa21ef275a3fe952188f9f137d")
+(provide :offb_control/slsStates "f3e31fbaa1359dc8029965f13b7710fe")
 
 

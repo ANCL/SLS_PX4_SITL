@@ -47,7 +47,7 @@ class slsStates {
       throw new Error('Unable to serialize array field sls_states - length must be 16')
     }
     // Serialize message field [sls_states]
-    bufferOffset = _arraySerializer.float32(obj.sls_states, buffer, bufferOffset, 16);
+    bufferOffset = _arraySerializer.float64(obj.sls_states, buffer, bufferOffset, 16);
     return bufferOffset;
   }
 
@@ -58,14 +58,14 @@ class slsStates {
     // Deserialize message field [header]
     data.header = std_msgs.msg.Header.deserialize(buffer, bufferOffset);
     // Deserialize message field [sls_states]
-    data.sls_states = _arrayDeserializer.float32(buffer, bufferOffset, 16)
+    data.sls_states = _arrayDeserializer.float64(buffer, bufferOffset, 16)
     return data;
   }
 
   static getMessageSize(object) {
     let length = 0;
     length += std_msgs.msg.Header.getMessageSize(object.header);
-    return length + 64;
+    return length + 128;
   }
 
   static datatype() {
@@ -75,7 +75,7 @@ class slsStates {
 
   static md5sum() {
     //Returns md5sum for a message object
-    return '8e8b90aa21ef275a3fe952188f9f137d';
+    return 'f3e31fbaa1359dc8029965f13b7710fe';
   }
 
   static messageDefinition() {
@@ -83,7 +83,7 @@ class slsStates {
     return `
     #sls_state
     std_msgs/Header header
-    float32[16] sls_states
+    float64[16] sls_states
     
     ================================================================================
     MSG: std_msgs/Header
