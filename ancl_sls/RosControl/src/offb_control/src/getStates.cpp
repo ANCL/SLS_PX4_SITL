@@ -10,6 +10,7 @@
 #include <tf2/transform_datatypes.h>
 #include <Eigen/Dense>
 #include <offb_control/slsStates.h>
+#include <offb_control/ActuatorControl0.h>
 
 #include <QuasiController.h>
 #include "rtwtypes.h"
@@ -28,7 +29,7 @@ static void argInit_1x6_real_T(double result[6]);
 
 static double argInit_real_T();
 
-static void main_QuasiController(double dv[16], double dv2[6], double controller_output[4], double dv3[3], double dv1[2]);
+static void main_QuasiController(double dv[16], double dv2[6], double controller_output[4], double dv3[3], double dv1[2], double point[3]);
 
 // Function Definitions
 //
@@ -100,7 +101,7 @@ static double argInit_real_T()
 // Arguments    : void
 // Return Type  : void
 //
-static void main_QuasiController(double dv[16], double dv2[6], double controller_output[4], double dv3[3], double dv1[2])
+static void main_QuasiController(double dv[16], double dv2[6], double controller_output[4], double dv3[3], double dv1[2], double point[3])
 {
   // Initialize function 'QuasiController' input arguments.
   // Initialize function input argument 'x'.
@@ -112,7 +113,7 @@ static void main_QuasiController(double dv[16], double dv2[6], double controller
   // argInit_1x2_real_T(dv1);
   // argInit_1x6_real_T(dv2);
   // argInit_1x3_real_T(dv3);
-  QuasiController(dv, dv1, dv2, dv3, controller_output);
+  QuasiController(dv, dv1, dv2, dv3, point, controller_output);
 }
 
 // ------------------------------------------------------------------------------------------
@@ -151,23 +152,29 @@ int main(int argc, char **argv){
   double controller_output[4] = {};
   double dv3[3] = {1.6,0.16,1};
   double dv1[2] = {10,5.4772};
+  double point[3] = {0,0,-10};
 	// ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped>
     //         ("/mavros/local_position/pose", 50, current_position_cb);
 	ros::Subscriber gazebo_state_sub = nh.subscribe<gazebo_msgs::LinkStates>
             ("gazebo/link_states", 50, gazebo_state_cb);
     // ros::Publisher sls_state_topic = nh.
-    // ros::Publisher actuator_setpoint_pub = nh.advertise<mavros_msgs::ActuatorControl> ("/mavros/actuator_control", 1000);
+    // ros::Publisher actu0_pub = nh.advertise<mavros_msgs::ActuatorControl> ("/mavros/actuator_control", 1000);
 
-     ros::Publisher sls_state_publish = nh.advertise<offb_control::slsStates> ("/offb_control/slsStates", 1000);
-    ros::Rate rate(500);
+  ros::Publisher sls_state_publish = nh.advertise<offb_control::slsStates> ("/offb_control/slsStates", 1000);
+  ros::Publisher actu0_publish = nh.advertise<offb_control::ActuatorControl0> ("/offb_control/ActuatorControl0", 1000);
+  ros::Rate rate(500);
+
 	// ros::spin();
-    offb_control::slsStates slsStatesPub;
-    slsStatesPub.sls_states = {0};
+  offb_control::slsStates slsStatesPub;
+  slsStatesPub.sls_states = {};
+  offb_control::ActuatorControl0 actu0;
+  actu0.group_mix = 0;
+
 
 	while(ros::ok()){
         slsStatesPub.sls_states[0] = sls_state1.x;
         slsStatesPub.sls_states[1] = sls_state1.y;
-        slsStatesPub.sls_states[2] = sls_state1.z;
+        slsStatesPub.sls_states[2] = -sls_state1.z;
         slsStatesPub.sls_states[3] = sls_state1.alpha;
         slsStatesPub.sls_states[4] = sls_state1.beta;
         slsStatesPub.sls_states[5] = sls_state1.roll;
@@ -187,9 +194,21 @@ int main(int argc, char **argv){
           // ROS_INFO_STREAM( "dv[i]: "<< i << " : " << dv[i] << "\n");
         }
         // ROS_INFO_STREAM( "First: "<< controller_output[0] << "\n");
-        main_QuasiController( dv, dv2, controller_output, dv3, dv1);
-        ROS_INFO_STREAM( "Second: "<< controller_output[0] << "\n");
+        main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
+                // local_pos_pub.publish(pose);
+        actu0.group_mix = 0;
+        actu0.controls[0] = controller_output[1];
+        actu0.controls[1] = controller_output[2];
+        actu0.controls[2] = controller_output[3];
+        actu0.controls[3] = controller_output[0];
+        actu0.controls[4] = 0;
+        actu0.controls[5] = 0;
+        actu0.controls[6] = 0;
+        actu0.controls[7] = 0;
+        actu0_publish.publish(actu0);
+        // ROS_INFO_STREAM( "thrust: "<< controller_output[0] << "\n" << "z position: " <<slsStatesPub.sls_states[2]);
         ros::spinOnce();
+        rate.sleep();
 	}
 	return 0;
 }

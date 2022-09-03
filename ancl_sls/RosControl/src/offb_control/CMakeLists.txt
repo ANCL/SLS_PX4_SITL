@@ -61,6 +61,7 @@ include_directories("/usr/include/eigen3")
 add_message_files(
   FILES
   slsStates.msg
+  ActuatorControl0.msg
 )
 
 ## Generate services in the 'srv' folder

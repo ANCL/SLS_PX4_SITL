@@ -5,7 +5,7 @@
 // File: QuasiController.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 29-Aug-2022 16:36:29
+// C/C++ source code generated on  : 02-Sep-2022 20:02:10
 //
 
 #ifndef QUASICONTROLLER_H
@@ -19,7 +19,7 @@
 // Function Declarations
 extern void QuasiController(const double x[16], const double Kv2[2],
                             const double Kv6[6], const double M[3],
-                            double controller_output[4]);
+                            const double point[3], double controller_output[4]);
 
 #endif
 //
