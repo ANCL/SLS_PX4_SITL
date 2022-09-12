@@ -19,6 +19,10 @@
 #include <tf2/transform_datatypes.h>
 // #include <tr>
 
+#include <Eigen/Dense>
+#include <offb_control/slsStates.h>
+#include <offb_control/ActuatorControl0.h>
+
 mavros_msgs::State current_state;
 void state_cb(const mavros_msgs::State::ConstPtr& msg){
     current_state = *msg;
@@ -31,6 +35,18 @@ struct sls_state {
 
 void current_position_cb(const geometry_msgs::PoseStamped::ConstPtr& msg);
 
+mavros_msgs::ActuatorControl actuator_setpoint;
+void actuator_cb(const offb_control::ActuatorControl0::ConstPtr& msg){
+    actuator_setpoint.group_mix = 0;
+    actuator_setpoint.controls[0] = msg->controls[0];
+    actuator_setpoint.controls[1] = msg->controls[1];
+    actuator_setpoint.controls[2] = msg->controls[2];
+    actuator_setpoint.controls[3] = msg->controls[3];
+    actuator_setpoint.controls[4] = msg->controls[4];
+    actuator_setpoint.controls[5] = msg->controls[5];
+    actuator_setpoint.controls[6] = msg->controls[6];
+    actuator_setpoint.controls[7] = msg->controls[7];
+}
 
 int main(int argc, char **argv)
 {
@@ -38,9 +54,10 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>
-            ("mavros/state", 10, state_cb);
+            ("mavros/state", 100, state_cb);
     ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped>
-            ("/mavros/local_position/pose", 1, current_position_cb);
+            ("/mavros/local_position/pose", 100, current_position_cb);
+    ros::Subscriber actuator_sub = nh.subscribe<offb_control::ActuatorControl0>("/offb_control/ActuatorControl0", 1000, actuator_cb);
     // ros::Publisher local_pos_pub = nh.advertise<geometry_msgs::PoseStamp ed> ("mavros/setpoint_position/local", 10);
     ros::Publisher actuator_setpoint_pub = nh.advertise<mavros_msgs::ActuatorControl> ("/mavros/actuator_control", 1000);
     ros::ServiceClient arming_client = nh.serviceClient<mavros_msgs::CommandBool>
@@ -62,36 +79,25 @@ int main(int argc, char **argv)
     // pose.pose.position.y = 5;
     // pose.pose.position.z = 5;
 
-    mavros_msgs::ActuatorControl actuator_setpoint;
-    actuator_setpoint.group_mix = 0;
-    actuator_setpoint.controls[0] = 0;
-    actuator_setpoint.controls[1] = 0;
-    actuator_setpoint.controls[2] = 0;
-    // std::cout<< actuator_setpoint.controls[2];
-    actuator_setpoint.controls[3] = (10-sls_state1.z)/10 * 0.2+0.7;
-    actuator_setpoint.controls[4] = 0;
-    actuator_setpoint.controls[5] = 0;
-    actuator_setpoint.controls[6] = 0;
-    actuator_setpoint.controls[7] = 0;
 
     //send a few setpoints before starting
-    for(int i = 100; ros::ok() && i > 0; --i){
-        // local_pos_pub.publish(pose);
-        actuator_setpoint.group_mix = 0;
-        actuator_setpoint.controls[0] = 0;
-        actuator_setpoint.controls[1] = 0;
-        actuator_setpoint.controls[2] = 0;
-        // std::cout<< actuator_setpoint.controls[2];
-        actuator_setpoint.controls[3] = (10-sls_state1.z)/10 * 0.2+0.7;
-        actuator_setpoint.controls[4] = 0;
-        actuator_setpoint.controls[5] = 0;
-        actuator_setpoint.controls[6] = 0;
-        actuator_setpoint.controls[7] = 0;
-        actuator_setpoint_pub.publish(actuator_setpoint);
-        ROS_INFO_STREAM(actuator_setpoint.controls[3]);
-        ros::spinOnce();
-        rate.sleep();
-    }
+    // for(int i = 100; ros::ok() && i > 0; --i){
+    //     // local_pos_pub.publish(pose);
+    //     actuator_setpoint.group_mix = 0;
+    //     actuator_setpoint.controls[0] = 0;
+    //     actuator_setpoint.controls[1] = 0;
+    //     actuator_setpoint.controls[2] = 0;
+    //     // std::cout<< actuator_setpoint.controls[2];
+    //     actuator_setpoint.controls[3] = (10-sls_state1.z)/10 * 0.2+0.7;
+    //     actuator_setpoint.controls[4] = 0;
+    //     actuator_setpoint.controls[5] = 0;
+    //     actuator_setpoint.controls[6] = 0;
+    //     actuator_setpoint.controls[7] = 0;
+    //     actuator_setpoint_pub.publish(actuator_setpoint);
+    //     ROS_INFO_STREAM(actuator_setpoint.controls[3]);
+    //     ros::spinOnce();
+    //     rate.sleep();
+    // }
 
     mavros_msgs::SetMode offb_set_mode;
     offb_set_mode.request.custom_mode = "OFFBOARD";
@@ -121,15 +127,15 @@ int main(int argc, char **argv)
         }
 
 
-        actuator_setpoint.group_mix = 0;
-        actuator_setpoint.controls[0] = 0;
-        actuator_setpoint.controls[1] = 0;
-        actuator_setpoint.controls[2] = 0;
-        actuator_setpoint.controls[3] = (10-sls_state1.z)/10 * 0.1+0.7;
-        actuator_setpoint.controls[4] = 0;
-        actuator_setpoint.controls[5] = 0;
-        actuator_setpoint.controls[6] = 0;
-        actuator_setpoint.controls[7] = 0;
+        // actuator_setpoint.group_mix = 0;
+        // actuator_setpoint.controls[0] = 0;
+        // actuator_setpoint.controls[1] = 0;
+        // actuator_setpoint.controls[2] = 0;
+        // actuator_setpoint.controls[3] = (10-sls_state1.z)/10 * 0.1+0.7;
+        // actuator_setpoint.controls[4] = 0;
+        // actuator_setpoint.controls[5] = 0;
+        // actuator_setpoint.controls[6] = 0;
+        // actuator_setpoint.controls[7] = 0;
         // local_pos_pub.publish(pose);
         actuator_setpoint_pub.publish(actuator_setpoint);
 
@@ -164,3 +170,5 @@ void current_position_cb(const geometry_msgs::PoseStamped::ConstPtr& msg){
 //     tf2::Ma
 //     m.getRPY(sls_state1.roll, sls_state1.pitch, sls_state1.yaw);
 }
+
+

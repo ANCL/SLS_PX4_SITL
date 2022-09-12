@@ -29,6 +29,11 @@ static void argInit_1x6_real_T(double result[6]);
 
 static double argInit_real_T();
 
+template<typename T>
+T saturate(T val, T min, T max) {
+    return std::min(std::max(val, min), max);
+}
+
 static void main_QuasiController(double dv[16], double dv2[6], double controller_output[4], double dv3[3], double dv1[2], double point[3]);
 
 // Function Definitions
@@ -150,11 +155,10 @@ int main(int argc, char **argv){
   double dv[16] = {};
   double dv2[6] = {3.162277660169037e+03,4.790583473550029e+03,3.470550719426292e+03,1.366677835196229e+03,3.240775203934431e+02,40.597475793291565};
   double controller_output[4] = {};
-  double dv3[3] = {1.6,0.16,1};
+  double dv3[3] = {1.535,0.1,1};
   double dv1[2] = {10,5.4772};
-  double point[3] = {0,0,-10};
-	// ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped>
-    //         ("/mavros/local_position/pose", 50, current_position_cb);
+  double point[3] = {1, 1,-9.3};
+	// ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped> ("/mavros/local_position/pose", 50, current_position_cb);
 	ros::Subscriber gazebo_state_sub = nh.subscribe<gazebo_msgs::LinkStates>
             ("gazebo/link_states", 50, gazebo_state_cb);
     // ros::Publisher sls_state_topic = nh.
@@ -174,7 +178,7 @@ int main(int argc, char **argv){
 	while(ros::ok()){
         slsStatesPub.sls_states[0] = sls_state1.x;
         slsStatesPub.sls_states[1] = sls_state1.y;
-        slsStatesPub.sls_states[2] = -sls_state1.z;
+        slsStatesPub.sls_states[2] = sls_state1.z;
         slsStatesPub.sls_states[3] = sls_state1.alpha;
         slsStatesPub.sls_states[4] = sls_state1.beta;
         slsStatesPub.sls_states[5] = sls_state1.roll;
@@ -197,10 +201,11 @@ int main(int argc, char **argv){
         main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
                 // local_pos_pub.publish(pose);
         actu0.group_mix = 0;
-        actu0.controls[0] = controller_output[1];
-        actu0.controls[1] = controller_output[2];
-        actu0.controls[2] = controller_output[3];
-        actu0.controls[3] = controller_output[0];
+        actu0.controls[0] = saturate<double>(controller_output[1],-20,20)/2000;
+        actu0.controls[1] = saturate<double>(controller_output[2],-20,20)/2000;
+        actu0.controls[2] = saturate<double>(controller_output[3],-10,10)/2000;
+        // actu0.controls[2] = 0;
+        actu0.controls[3] = saturate<double>((saturate<double>(controller_output[0],0,50)-16.35)/800 + 0.74,0.5,0.95);
         actu0.controls[4] = 0;
         actu0.controls[5] = 0;
         actu0.controls[6] = 0;
@@ -215,31 +220,17 @@ int main(int argc, char **argv){
 
 // void current_position_cb(const geometry_msgs::PoseStamped::ConstPtr& msg){
 
-//     sls_state1.x = msg -> pose.position.x;
-//     sls_state1.y = msg -> pose.position.y;
-//     sls_state1.z = msg -> pose.position.z;
-//     //quaternion to r p y
 //     double quatx = msg->pose.orientation.x;
 //     double quaty = msg->pose.orientation.y;
 //     double quatz = msg->pose.orientation.z;
 //     double quatw = msg->pose.orientation.w;
 
-//     // ROS_INFO_STREAM("quad position x" << sls_state1.x  << "y" << sls_state1.y << "z" << sls_state1.z << "Quotenion: " << quatx << quaty << quatz << quatw );
 
-//     // need sequency: pitch(y) roll(x) yaw(z)ROS_INFO_STREAM()
 //     tf2::Quaternion q(quatx,quaty,quatz,quatw);
 //     tf2::Matrix3x3 m(q);
 //     double roll, pitch, yaw;
 //     m.getRPY(roll, pitch, yaw);
-//     sls_state1.roll = roll;
-//     sls_state1.pitch = pitch;
-//     sls_state1.yaw = yaw;
 
-//     // sls_state1.
-
-//     // ROS_INFO_STREAM("quad position: " <<" x: " << msg ->pose.position.x << " y: "<< msg ->pose.position.y << " z: " << msg ->pose.position.z);
-// //     tf2::Ma
-// //     m.getRPY(sls_state1.roll, sls_state1.pitch, sls_state1.yaw);
 // }
 
 void gazebo_state_cb(const gazebo_msgs::LinkStates::ConstPtr& msg){
@@ -260,68 +251,38 @@ void gazebo_state_cb(const gazebo_msgs::LinkStates::ConstPtr& msg){
     // double roll, pitch, yaw;
     // m.getRPY(roll, pitch, yaw, 1);
 
-    tf2::Quaternion quad_q(quadpose.orientation.x, quadpose.orientation.y, quadpose.orientation.z, quadpose.orientation.w );
+    tf2::Quaternion quad_q(quadpose.orientation.x, quadpose.orientation.y, quadpose.orientation.z, quadpose.orientation.w);
     tf2::Matrix3x3 quad_m(quad_q);
     double quad_roll, quad_pitch, quad_yaw;
     quad_m.getRPY(quad_roll, quad_pitch, quad_yaw);
 
     sls_state1.x = loadpose.position.x;
-    sls_state1.y = loadpose.position.y;
-    sls_state1.z = loadpose.position.z;
+    sls_state1.y = -loadpose.position.y;
+    sls_state1.z = -loadpose.position.z;
     sls_state1.vx = msg->twist[10].linear.x;
-    sls_state1.vy = msg->twist[10].linear.y;
-    sls_state1.vz = msg->twist[10].linear.z;
+    sls_state1.vy = -msg->twist[10].linear.y;
+    sls_state1.vz = -msg->twist[10].linear.z;
     sls_state1.roll = quad_roll;
-    sls_state1.pitch = quad_pitch;
-    sls_state1.yaw = quad_yaw;
-    sls_state1.omega_1 = msg->twist[10].angular.x;
-    sls_state1.omega_2 = msg->twist[10].angular.y;
-    sls_state1.omega_3 = msg->twist[10].angular.z;
+    sls_state1.pitch = -quad_pitch;
+    sls_state1.yaw = -quad_yaw;
+    sls_state1.omega_1 = quadtwist.angular.x;
+    sls_state1.omega_2 = -quadtwist.angular.y;
+    sls_state1.omega_3 = -quadtwist.angular.z;
 
-    double Lx = loadpose.position.x - quadpose.position.x ;
-    double Ly = loadpose.position.y - quadpose.position.y ;
-    double Lz = loadpose.position.z - quadpose.position.z ;
+
+    double Lx = (loadpose.position.x) - (quadpose.position.x) ;
+    double Ly = (-loadpose.position.y) - (-quadpose.position.y) ;
+    double Lz = (-loadpose.position.z) - (-quadpose.position.z) ;
     penangle = ToPenAngles( Lx, Ly, - Lz ); // in the paper the definition of n3 are opposite to the Z axis of gazebo
     sls_state1.alpha = penangle.alpha;
     sls_state1.beta = penangle.beta;
-    // sls_state1.alpha = roll+ 3.1415926;
-    // if (sls_state1.alpha > 3.1415926){
-    //     sls_state1.alpha = sls_state1.alpha-2*3.1415926;
-    // }
-    // sls_state1.beta = pitch;
-
-    // pendtwist = msg->twist[9];
-    // sls_state1.gamma_alpha = pendtwist.angular.x;
-    // if (cos(sls_state1.alpha) < 0.05){
-    //     sls_state1.gamma_beta = pendtwist.angular.z/std::sin(sls_state1.alpha);
-    // }else{
-    //     sls_state1.gamma_beta = pendtwist.angular.y/std::cos(sls_state1.alpha);
-    // }
-    // double g_beta1 = pendtwist.angular.z/std::sin(sls_state1.alpha);
 
     double g_alpha, g_beta;
-    g_beta = (loadtwist.linear.x - quadtwist.linear.x)/std::cos(sls_state1.beta);
-    g_alpha = (loadtwist.linear.y - quadtwist.linear.y - std::sin(sls_state1.alpha)*std::sin(sls_state1.beta)*g_beta)/(-std::cos(sls_state1.alpha)*std::cos(sls_state1.beta));
+    g_beta = ((loadtwist.linear.x) - (quadtwist.linear.x))/std::cos(sls_state1.beta);
+    g_alpha = ((-loadtwist.linear.y) - (-quadtwist.linear.y) - std::sin(sls_state1.alpha)*std::sin(sls_state1.beta)*g_beta)/(-std::cos(sls_state1.alpha)*std::cos(sls_state1.beta));
 
     sls_state1.gamma_alpha = g_alpha;
     sls_state1.gamma_beta = g_beta;
-    // ROS_INFO_STREAM(sls_state1.alpha << "  "<<sls_state1.beta << "  "<<sls_state1.gamma_alpha<< " cos alpha: " << cos(sls_state1.alpha) << " gamma_beta: "<<sls_state1.gamma_beta);
-    // ROS_INFO_STREAM("gamme_alpha: " << sls_state1.gamma_alpha << "  " << g_alpha <<  "  gamma_beta: " << sls_state1.gamma_beta << "  " << g_beta);
-
-    // for (int x=0;x<3;x++){
-    //     for (int y=0;y<3;y++){
-    //         std::cout<<y << x <<m[y][x]<<"\n";
-    //     }
-    // }
-
-    // ROS_INFO_STREAM("pend rpy, " <<"Roll: " <<roll << "Pitch: "<< pitch << "Yaw: " << yaw);
-    // ROS_INFO_STREAM("quadpose, " <<" x: " << quadpose.position.x << " y: "<< quadpose.position.y << " z: " << quadpose.position.z);
-
-    // ROS_INFO_STREAM(sls_state1.alpha << "  " << penangle.alpha << "  " << sls_state1.beta << "   "<< penangle.beta);
-    // sls_state1.gamma_alpha << " gamma_beta: "<<sls_state1.gamma_beta <<
-
-//      ROS_INFO_STREAM("load position" << Lx  << Ly << Lz );
-
 }
 
 
@@ -329,16 +290,20 @@ PendulumAngles ToPenAngles(double Lx,double Ly,double Lz) { //x=base.x
     PendulumAngles angles;
     double L = 1;
 
-    // alpha (x-axis rotation)
-
-    double cosa_cosb = Lz/L;
-    double sina_cosb = Ly/-L;
-    angles.alpha = std::atan2(sina_cosb,cosa_cosb);
 
     // beta (y-axis rotation)
     double sinbeta = Lx/L;
     double cosbeta = Lz/(L*std::cos(angles.alpha));
-    angles.beta = std::atan2(sinbeta,cosbeta);
+    angles.beta = std::asin(sinbeta);
+    // ROS_INFO_STREAM("beta: " << angles.beta << "\n");
+    // alpha (x-axis rotation)
+
+    double cosa_cosb = Lz/L;
+    double sina_cosb = Ly/-L;
+    angles.alpha = std::asin(sina_cosb/std::cos(angles.beta));
+    // ROS_INFO_STREAM("alpha: " << angles.alpha << "\n");
+
+
 
     return angles;
 }
