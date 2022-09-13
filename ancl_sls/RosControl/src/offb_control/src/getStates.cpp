@@ -209,10 +209,10 @@ int main(int argc, char **argv){
         // actu0.controls[2] = 0;
         // actu0.controls[3] = saturate<double>((saturate<double>(controller_output[0],0,50)-16.35)/800 + 0.74,0.5,0.95);
         // actu0.controls[3] = saturate<double>((saturate<double>(controller_output[0],0,50))/800 + 0.74,0.5,0.95);
-        actu0.controls[0] = saturate<double>(controller_output[1], -20, 20)/200;
-        actu0.controls[1] = saturate<double>(controller_output[2], -20, 20)/200;
-        actu0.controls[2] = saturate<double>(controller_output[3], -20, 20)/200;
-        actu0.controls[3] = controller_output[0]/200+0.74;
+        actu0.controls[0] = saturate<double>(controller_output[1], -100, 100)/200;
+        actu0.controls[1] = saturate<double>(controller_output[2], -100, 100)/200;
+        actu0.controls[2] = saturate<double>(controller_output[3], -100, 100)/200;
+        actu0.controls[3] = controller_output[0]/200+0.735292673;
         // actu0.controls[0] = 0.01;
         // actu0.controls[1] = 0.01;
         // actu0.controls[2] = 0;
