@@ -23,6 +23,7 @@
 #include <offb_control/slsStates.h>
 #include <offb_control/ActuatorControl0.h>
 
+
 mavros_msgs::State current_state;
 void state_cb(const mavros_msgs::State::ConstPtr& msg){
     current_state = *msg;

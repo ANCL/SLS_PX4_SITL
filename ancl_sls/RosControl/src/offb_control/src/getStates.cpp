@@ -12,6 +12,7 @@
 #include <offb_control/slsStates.h>
 #include <offb_control/ActuatorControl0.h>
 
+#include <FullLin1Control.h>
 #include <QuasiController.h>
 #include "rtwtypes.h"
 #include <cstddef>
@@ -157,7 +158,7 @@ int main(int argc, char **argv){
   double controller_output[4] = {};
   double dv3[3] = {1.535,0.1,1};
   double dv1[2] = {10,5.4772};
-  double point[3] = {1, 1,-9.3};
+  double point[3] = {1, 1, -9.3};
 	// ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped> ("/mavros/local_position/pose", 50, current_position_cb);
 	ros::Subscriber gazebo_state_sub = nh.subscribe<gazebo_msgs::LinkStates>
             ("gazebo/link_states", 50, gazebo_state_cb);
@@ -198,14 +199,24 @@ int main(int argc, char **argv){
           // ROS_INFO_STREAM( "dv[i]: "<< i << " : " << dv[i] << "\n");
         }
         // ROS_INFO_STREAM( "First: "<< controller_output[0] << "\n");
-        main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
+        // main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
+        FullLin1Control(dv, point, controller_output);
                 // local_pos_pub.publish(pose);
         actu0.group_mix = 0;
-        actu0.controls[0] = saturate<double>(controller_output[1],-20,20)/2000;
-        actu0.controls[1] = saturate<double>(controller_output[2],-20,20)/2000;
-        actu0.controls[2] = saturate<double>(controller_output[3],-10,10)/2000;
+        // actu0.controls[0] = saturate<double>(controller_output[1],-20,20)/2000;
+        // actu0.controls[1] = saturate<double>(controller_output[2],-20,20)/2000;
+        // actu0.controls[2] = saturate<double>(controller_output[3],-10,10)/2000;
         // actu0.controls[2] = 0;
-        actu0.controls[3] = saturate<double>((saturate<double>(controller_output[0],0,50)-16.35)/800 + 0.74,0.5,0.95);
+        // actu0.controls[3] = saturate<double>((saturate<double>(controller_output[0],0,50)-16.35)/800 + 0.74,0.5,0.95);
+        // actu0.controls[3] = saturate<double>((saturate<double>(controller_output[0],0,50))/800 + 0.74,0.5,0.95);
+        actu0.controls[0] = saturate<double>(controller_output[1], -20, 20)/200;
+        actu0.controls[1] = saturate<double>(controller_output[2], -20, 20)/200;
+        actu0.controls[2] = saturate<double>(controller_output[3], -20, 20)/200;
+        actu0.controls[3] = controller_output[0]/200+0.74;
+        // actu0.controls[0] = 0.01;
+        // actu0.controls[1] = 0.01;
+        // actu0.controls[2] = 0;
+        // actu0.controls[3] = 0.74;
         actu0.controls[4] = 0;
         actu0.controls[5] = 0;
         actu0.controls[6] = 0;
