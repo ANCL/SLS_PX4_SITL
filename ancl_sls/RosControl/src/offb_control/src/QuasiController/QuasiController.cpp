@@ -5,7 +5,7 @@
 // File: QuasiController.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 02-Sep-2022 20:02:10
+// C/C++ source code generated on  : 15-Sep-2022 17:05:49
 //
 
 // Include Files
@@ -76,13 +76,13 @@ static double rt_powd_snf(double u0, double u1)
 // Arguments    : const double x[16]
 //                const double Kv2[2]
 //                const double Kv6[6]
-//                const double M[3]
+//                const double M[4]
 //                const double point[3]
 //                double controller_output[4]
 // Return Type  : void
 //
 void QuasiController(const double x[16], const double Kv2[2], const double Kv6[6],
-                     const double M[3], const double point[3], double
+                     const double M[4], const double point[3], double
                      controller_output[4])
 {
   double yr[20];

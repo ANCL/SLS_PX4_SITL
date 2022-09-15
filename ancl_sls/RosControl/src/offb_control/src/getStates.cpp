@@ -156,6 +156,7 @@ int main(int argc, char **argv){
   double dv[16] = {};
   double dv2[6] = {3.162277660169037e+03,4.790583473550029e+03,3.470550719426292e+03,1.366677835196229e+03,3.240775203934431e+02,40.597475793291565};
   double controller_output[4] = {};
+  double controller_output1[4] = {};
   double dv3[3] = {1.535,0.1,1};
   double dv1[2] = {10,5.4772};
   double point[3] = {1, 1, -9.3};
@@ -199,20 +200,22 @@ int main(int argc, char **argv){
           // ROS_INFO_STREAM( "dv[i]: "<< i << " : " << dv[i] << "\n");
         }
         // ROS_INFO_STREAM( "First: "<< controller_output[0] << "\n");
-        // main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
-        FullLin1Control(dv, point, controller_output);
+        main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
+        // FullLin1Control(dv, point, controller_output1);
+        // ROS_INFO_STREAM("LQR: " << controller_output1[0] << "  " << controller_output1[1] << "  " << controller_output1[2] << "  " << controller_output1[3] << "\n");
+        // ROS_INFO_STREAM("Quasi: " << controller_output[0]-16.35 << "  " << controller_output[1] << "  " << controller_output[2] << "  " << controller_output[3] << "\n");
                 // local_pos_pub.publish(pose);
         actu0.group_mix = 0;
-        // actu0.controls[0] = saturate<double>(controller_output[1],-20,20)/2000;
-        // actu0.controls[1] = saturate<double>(controller_output[2],-20,20)/2000;
-        // actu0.controls[2] = saturate<double>(controller_output[3],-10,10)/2000;
-        // actu0.controls[2] = 0;
-        // actu0.controls[3] = saturate<double>((saturate<double>(controller_output[0],0,50)-16.35)/800 + 0.74,0.5,0.95);
-        // actu0.controls[3] = saturate<double>((saturate<double>(controller_output[0],0,50))/800 + 0.74,0.5,0.95);
-        actu0.controls[0] = saturate<double>(controller_output[1], -100, 100)/200;
-        actu0.controls[1] = saturate<double>(controller_output[2], -100, 100)/200;
-        actu0.controls[2] = saturate<double>(controller_output[3], -100, 100)/200;
-        actu0.controls[3] = controller_output[0]/200+0.735292673;
+        //LQR Control
+        // actu0.controls[0] = saturate<double>(controller_output1[1]/200, -1, 1);
+        // actu0.controls[1] = saturate<double>(controller_output1[2]/200, -1, 1);
+        // actu0.controls[2] = saturate<double>(controller_output1[3]/200, -1, 1);
+        // actu0.controls[3] = (controller_output1[0])/200 + 0.735292673;
+        // Quasi Control
+        actu0.controls[0] = saturate<double>(controller_output[1]/8, -1, 1);
+        actu0.controls[1] = saturate<double>(controller_output[2]/8, -1, 1);
+        actu0.controls[2] = saturate<double>(controller_output[3]/8, -1, 1);
+        actu0.controls[3] = (controller_output[0]-16.35)/100 + 0.735292673;
         // actu0.controls[0] = 0.01;
         // actu0.controls[1] = 0.01;
         // actu0.controls[2] = 0;
