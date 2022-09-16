@@ -212,10 +212,10 @@ int main(int argc, char **argv){
         // actu0.controls[2] = saturate<double>(controller_output1[3]/200, -1, 1);
         // actu0.controls[3] = (controller_output1[0])/200 + 0.735292673;
         // Quasi Control
-        actu0.controls[0] = saturate<double>(controller_output[1]/8, -1, 1);
-        actu0.controls[1] = saturate<double>(controller_output[2]/8, -1, 1);
-        actu0.controls[2] = saturate<double>(controller_output[3]/8, -1, 1);
-        actu0.controls[3] = (controller_output[0]-16.35)/100 + 0.735292673;
+        actu0.controls[0] = saturate<double>(controller_output[1]/12, -1, 1);
+        actu0.controls[1] = saturate<double>(controller_output[2]/12, -1, 1);
+        actu0.controls[2] = saturate<double>(controller_output[3]/12, -1, 1);
+        actu0.controls[3] = (controller_output[0]-16.35)/200 + 0.735292673;
         // actu0.controls[0] = 0.01;
         // actu0.controls[1] = 0.01;
         // actu0.controls[2] = 0;
