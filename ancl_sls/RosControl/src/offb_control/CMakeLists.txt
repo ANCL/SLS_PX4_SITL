@@ -171,8 +171,9 @@ target_link_libraries(offb_control_node ${catkin_LIBRARIES})
 target_link_libraries(get_states_node ${catkin_LIBRARIES})
 
 add_subdirectory(src/QuasiController)
+add_subdirectory(src/QuasiControllerTrack)
 add_subdirectory(src/LinearController)
-target_link_libraries(get_states_node quasicontrol linearcontrol)
+target_link_libraries(get_states_node quasicontrol linearcontrol quasicontroltrack)
 # target_link_directories(get_states_node PUBLIC src/QuasiController/)
 # target_link_directories(test PUBLIC libs/)
 

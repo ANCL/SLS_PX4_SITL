@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <gazebo_msgs/LinkStates.h>
+#include <mavros_msgs/State.h>
 // #include <mavros_msgs/ActuatorControl.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float64.h>
@@ -14,94 +15,25 @@
 
 #include <FullLin1Control.h>
 #include <QuasiController.h>
+#include <QuasiControllerTrack.h>
 #include "rtwtypes.h"
 #include <cstddef>
 #include <cstdlib>
 
 // ------------------------------------------------------------------------------------------------------------------
 
-static void argInit_1x16_real_T(double result[16]);
-
-static void argInit_1x2_real_T(double result[2]);
-
-static void argInit_1x3_real_T(double result[3]);
-
-static void argInit_1x6_real_T(double result[6]);
-
-static double argInit_real_T();
 
 template<typename T>
 T saturate(T val, T min, T max) {
     return std::min(std::max(val, min), max);
 }
 
+template<typename T>
+T sigmoidf(T x) {
+    return x/(1+std::abs(x));
+}
+
 static void main_QuasiController(double dv[16], double dv2[6], double controller_output[4], double dv3[3], double dv1[2], double point[3]);
-
-// Function Definitions
-//
-// Arguments    : double result[16]
-// Return Type  : void
-//
-static void argInit_1x16_real_T(double result[16])
-{
-  // Loop over the array to initialize each element.
-  for (int idx1{0}; idx1 < 16; idx1++) {
-    // Set the value of the array element.
-    // Change this value to the value that the application requires.
-    result[idx1] = argInit_real_T();
-  }
-}
-
-//
-// Arguments    : double result[2]
-// Return Type  : void
-//
-static void argInit_1x2_real_T(double result[2])
-{
-  // Loop over the array to initialize each element.
-  for (int idx1{0}; idx1 < 2; idx1++) {
-    // Set the value of the array element.
-    // Change this value to the value that the application requires.
-    result[idx1] = argInit_real_T();
-  }
-}
-
-//
-// Arguments    : double result[3]
-// Return Type  : void
-//
-static void argInit_1x3_real_T(double result[3])
-{
-  // Loop over the array to initialize each element.
-  for (int idx1{0}; idx1 < 3; idx1++) {
-    // Set the value of the array element.
-    // Change this value to the value that the application requires.
-    result[idx1] = argInit_real_T();
-  }
-}
-
-//
-// Arguments    : double result[6]
-// Return Type  : void
-//
-static void argInit_1x6_real_T(double result[6])
-{
-  // Loop over the array to initialize each element.
-  for (int idx1{0}; idx1 < 6; idx1++) {
-    // Set the value of the array element.
-    // Change this value to the value that the application requires.
-    result[idx1] = argInit_real_T();
-  }
-}
-
-//
-// Arguments    : void
-// Return Type  : double
-//
-static double argInit_real_T()
-{
-  return 0.0;
-}
 
 //
 // Arguments    : void
@@ -109,17 +41,12 @@ static double argInit_real_T()
 //
 static void main_QuasiController(double dv[16], double dv2[6], double controller_output[4], double dv3[3], double dv1[2], double point[3])
 {
-  // Initialize function 'QuasiController' input arguments.
-  // Initialize function input argument 'x'.
-  // Initialize function input argument 'Kv2'.
-  // Initialize function input argument 'Kv6'.
-  // Initialize function input argument 'M'.
-  // Call the entry-point 'QuasiController'.
-  // argInit_1x16_real_T(dv);
-  // argInit_1x2_real_T(dv1);
-  // argInit_1x6_real_T(dv2);
-  // argInit_1x3_real_T(dv3);
   QuasiController(dv, dv1, dv2, dv3, point, controller_output);
+}
+
+mavros_msgs::State current_state;
+void state_cb(const mavros_msgs::State::ConstPtr& msg){
+    current_state = *msg;
 }
 
 // ------------------------------------------------------------------------------------------
@@ -155,11 +82,14 @@ int main(int argc, char **argv){
 
   double dv[16] = {};
   double dv2[6] = {3.162277660169037e+03,4.790583473550029e+03,3.470550719426292e+03,1.366677835196229e+03,3.240775203934431e+02,40.597475793291565};
+  // double dv2[6] = {10.0000,   30.6980,   42.1184,   34.8025,   18.6387,    6.1869};
   double controller_output[4] = {};
   double controller_output1[4] = {};
   double dv3[3] = {1.535,0.1,1};
   double dv1[2] = {10,5.4772};
+  // double dv1[2] = {2.2361,    3.0777};
   double point[3] = {1, 1, -9.3};
+  double TParam[4] = {8, 3, 1.5, 0.5};
 	// ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped> ("/mavros/local_position/pose", 50, current_position_cb);
 	ros::Subscriber gazebo_state_sub = nh.subscribe<gazebo_msgs::LinkStates>
             ("gazebo/link_states", 50, gazebo_state_cb);
@@ -168,6 +98,7 @@ int main(int argc, char **argv){
 
   ros::Publisher sls_state_publish = nh.advertise<offb_control::slsStates> ("/offb_control/slsStates", 1000);
   ros::Publisher actu0_publish = nh.advertise<offb_control::ActuatorControl0> ("/offb_control/ActuatorControl0", 1000);
+  ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>("mavros/state", 100, state_cb);
   ros::Rate rate(500);
 
 	// ros::spin();
@@ -176,6 +107,7 @@ int main(int argc, char **argv){
   offb_control::ActuatorControl0 actu0;
   actu0.group_mix = 0;
 
+  double t0 = 0;
 
 	while(ros::ok()){
         slsStatesPub.sls_states[0] = sls_state1.x;
@@ -199,23 +131,40 @@ int main(int argc, char **argv){
           dv[i] = slsStatesPub.sls_states[i];
           // ROS_INFO_STREAM( "dv[i]: "<< i << " : " << dv[i] << "\n");
         }
+        if( current_state.mode != "OFFBOARD"){
+          t0 = ros::Time::now().toSec();
+        }
         // ROS_INFO_STREAM( "First: "<< controller_output[0] << "\n");
-        main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
+        // main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
+        QuasiControllerTrack( dv, ros::Time::now().toSec()-t0,dv1, dv2 , dv3, TParam,controller_output);
+        // ROS_INFO_STREAM("time: " << ros::Time::now().toSec()-t0 );
         // FullLin1Control(dv, point, controller_output1);
         // ROS_INFO_STREAM("LQR: " << controller_output1[0] << "  " << controller_output1[1] << "  " << controller_output1[2] << "  " << controller_output1[3] << "\n");
         // ROS_INFO_STREAM("Quasi: " << controller_output[0]-16.35 << "  " << controller_output[1] << "  " << controller_output[2] << "  " << controller_output[3] << "\n");
                 // local_pos_pub.publish(pose);
         actu0.group_mix = 0;
         //LQR Control
+        // ********************************************************************************************************
         // actu0.controls[0] = saturate<double>(controller_output1[1]/200, -1, 1);
         // actu0.controls[1] = saturate<double>(controller_output1[2]/200, -1, 1);
         // actu0.controls[2] = saturate<double>(controller_output1[3]/200, -1, 1);
         // actu0.controls[3] = (controller_output1[0])/200 + 0.735292673;
+        // ********************************************************************************************************
         // Quasi Control
+        // ********************************************************************************************************
+        // actu0.controls[0] = saturate<double>(controller_output[1]/12, -1, 1);
+        // actu0.controls[1] = saturate<double>(controller_output[2]/12, -1, 1);
+        // actu0.controls[2] = saturate<double>(controller_output[3]/12, -1, 1);
+        // actu0.controls[3] = (controller_output[0]-16.35)/200 + 0.735292673;
+        // ********************************************************************************************************
+        // ********************************************************************************************************
         actu0.controls[0] = saturate<double>(controller_output[1]/12, -1, 1);
         actu0.controls[1] = saturate<double>(controller_output[2]/12, -1, 1);
+        // actu0.controls[0] = std::tanh(controller_output[1]);
+        // actu0.controls[1] = std::tanh(controller_output[2]);
         actu0.controls[2] = saturate<double>(controller_output[3]/12, -1, 1);
         actu0.controls[3] = (controller_output[0]-16.35)/200 + 0.735292673;
+        // ********************************************************************************************************
         // actu0.controls[0] = 0.01;
         // actu0.controls[1] = 0.01;
         // actu0.controls[2] = 0;
