@@ -5,7 +5,7 @@
 // File: QuasiControllerTrack.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 17-Sep-2022 16:34:38
+// C/C++ source code generated on  : 25-Sep-2022 15:41:47
 //
 
 #ifndef QUASICONTROLLERTRACK_H
@@ -19,7 +19,7 @@
 // Function Declarations
 extern void QuasiControllerTrack(const double x[16], double t,
                                  const double Kv2[2], const double Kv6[6],
-                                 const double M[3], const double TParam[4],
+                                 const double M[7], const double TParam[4],
                                  double controller_output[4]);
 
 #endif

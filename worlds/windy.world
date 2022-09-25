@@ -17,7 +17,7 @@
       <robotNamespace/>
       <windVelocityMean>4.0</windVelocityMean>
       <windVelocityMax>20.0</windVelocityMax>
-      <windVelocityVariance>0</windVelocityVariance>
+      <windVelocityVariance>1</windVelocityVariance>
       <windDirectionMean>0 1 0</windDirectionMean>
       <windDirectionVariance>0</windDirectionVariance>
       <windGustStart>0</windGustStart>

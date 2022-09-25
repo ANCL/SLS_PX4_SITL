@@ -5,7 +5,7 @@
 // File: QuasiController_data.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 02-Sep-2022 20:02:10
+// C/C++ source code generated on  : 25-Sep-2022 16:03:15
 //
 
 #ifndef QUASICONTROLLER_DATA_H

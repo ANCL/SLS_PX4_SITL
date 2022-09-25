@@ -15,9 +15,9 @@
         <ixx>0.00005</ixx>
         <ixy>0</ixy>
         <ixz>0</ixz>
-        <iyy>0.008333</iyy>
+        <iyy>0.0008333</iyy>
         <iyz>0</iyz>
-        <izz>0.008333</izz>
+        <izz>0.0008333</izz>
       </inertia>
     </inertial>
     <!-- <collision name='pendulun_collision'>
@@ -49,7 +49,7 @@
   <link name='load'>
     <pose>0 0 -1 0 0 0</pose>
     <inertial>
-      <mass>0.1</mass>
+      <mass>0.15</mass>
       <inertia>
         <ixx>0.004</ixx>
         <ixy>0</ixy>
