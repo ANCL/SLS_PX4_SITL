@@ -88,7 +88,7 @@ int main(int argc, char **argv){
   double dv3[7] = {1.535,0.15,1, 9.8066,0.0306,0.0306,0.0576};
   double dv1[2] = {10,5.4772};
   // double dv1[2] = {2.2361,    3.0777};
-  double point[3] = {1, 1, -10};
+  double point[3] = {0, 0, -10};
   double TParam[4] = {8, 3, 1.5, 0.5};
 	// ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped> ("/mavros/local_position/pose", 50, current_position_cb);
 	ros::Subscriber gazebo_state_sub = nh.subscribe<gazebo_msgs::LinkStates>
@@ -133,6 +133,7 @@ int main(int argc, char **argv){
         }
         if( current_state.mode != "OFFBOARD"){
           t0 = ros::Time::now().toSec();
+          // ROS_INFO_STREAM(t0);
         }
         // ROS_INFO_STREAM( "First: "<< controller_output[0] << "\n");
         main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
@@ -148,12 +149,12 @@ int main(int argc, char **argv){
         // actu0.controls[0] = saturate<double>(controller_output1[1]/190, -1, 1);
         // actu0.controls[1] = saturate<double>(controller_output1[2]/190, -1, 1);
         // actu0.controls[2] = saturate<double>(controller_output1[3]/190, -1, 1);
-        // actu0.controls[3] = (controller_output1[0])/190 + 0.735292673;
+        // actu0.controls[3] = (controller_output1[0])/190 + 0.747;
         // ********************************************************************************************************
         // Quasi Control
         // ********************************************************************************************************
         actu0.controls[0] = saturate<double>(controller_output[1]/12, -1, 1);
-        actu0.controls[1] = saturate<double>(controller_output[2]/10, -1, 1);
+        actu0.controls[1] = saturate<double>(controller_output[2]/12, -1, 1);
         actu0.controls[2] = saturate<double>(controller_output[3]/12, -1, 1);
         actu0.controls[3] = (controller_output[0]-16.35)/200 + 0.747;
         // ********************************************************************************************************
