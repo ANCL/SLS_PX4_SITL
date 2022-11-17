@@ -21,6 +21,8 @@
 
 #include "gazebo_motor_model.h"
 #include <ignition/math.hh>
+// #include <ros/ros.h>
+// #include <ros/console.h>
 
 namespace gazebo {
 
@@ -121,6 +123,8 @@ void GazeboMotorModel::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
     reversible_ = _sdf->GetElement("reversible")->Get<bool>();
   }
 
+  // gzthrow("[gazebo_rotor_model_plugin] Hello!!!! ");
+
   getSdfParam<std::string>(_sdf, "commandSubTopic", command_sub_topic_, command_sub_topic_);
   getSdfParam<std::string>(_sdf, "motorSpeedPubTopic", motor_speed_pub_topic_,
                            motor_speed_pub_topic_);
@@ -179,6 +183,9 @@ void GazeboMotorModel::OnUpdate(const common::UpdateInfo& _info) {
   UpdateForcesAndMoments();
   UpdateMotorFail();
   Publish();
+  // // ROS_INFO("Hello World!");
+  // // ROS_DEBUG_STREAM("Hello " << "World");
+  // gzthrow("[gazebo_rotor_model_plugin] Hello!!!! ");
 }
 
 void GazeboMotorModel::VelocityCallback(CommandMotorSpeedPtr &rot_velocities) {
@@ -203,6 +210,17 @@ void GazeboMotorModel::UpdateForcesAndMoments() {
     // Not allowed to have negative thrust.
     force = std::abs(force);
   }
+
+  // Zifei Add to publish to ros
+  // if (!ros::isInitialized()){
+  //   ROS_FATAL_STREAM("A ROS node for Gazebo has not been initialized, unable to load plugin. "
+  //       << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
+  // }else
+  // {
+  //   ROS_INFO("Hello World!");
+  //   ROS_DEBUG_STREAM("Hello " << "World");
+  // }
+
 
   // scale down force linearly with forward speed
   // XXX this has to be modelled better

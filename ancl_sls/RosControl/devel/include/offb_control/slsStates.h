@@ -8,7 +8,7 @@
 
 #include <string>
 #include <vector>
-#include <map>
+#include <memory>
 
 #include <ros/types.h>
 #include <ros/serialization.h>
@@ -96,16 +96,6 @@ namespace message_traits
 
 
 template <class ContainerAllocator>
-struct IsFixedSize< ::offb_control::slsStates_<ContainerAllocator> >
-  : FalseType
-  { };
-
-template <class ContainerAllocator>
-struct IsFixedSize< ::offb_control::slsStates_<ContainerAllocator> const>
-  : FalseType
-  { };
-
-template <class ContainerAllocator>
 struct IsMessage< ::offb_control::slsStates_<ContainerAllocator> >
   : TrueType
   { };
@@ -113,6 +103,16 @@ struct IsMessage< ::offb_control::slsStates_<ContainerAllocator> >
 template <class ContainerAllocator>
 struct IsMessage< ::offb_control::slsStates_<ContainerAllocator> const>
   : TrueType
+  { };
+
+template <class ContainerAllocator>
+struct IsFixedSize< ::offb_control::slsStates_<ContainerAllocator> >
+  : FalseType
+  { };
+
+template <class ContainerAllocator>
+struct IsFixedSize< ::offb_control::slsStates_<ContainerAllocator> const>
+  : FalseType
   { };
 
 template <class ContainerAllocator>

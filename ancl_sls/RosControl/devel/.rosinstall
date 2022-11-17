@@ -1,2 +1,2 @@
 - setup-file:
-    local-name: /src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/setup.sh
+    local-name: /home/fei/coderepo/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/setup.sh

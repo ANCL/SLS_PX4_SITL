@@ -8,9 +8,9 @@ pkill px4 || true
 
 # make px4_sitl_default gazebo no_sim=1 &
 # sleep 1
-gzserver /src/PX4-Autopilot/Tools/sitl_gazebo/worlds/windy.world --verbose &
+gzserver /home/fei/coderepo/PX4-Autopilot/Tools/sitl_gazebo/worlds/empty.world --verbose &
 sleep 1
-gz model --spawn-file=/src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/iris_pendulum/iris_pendulum.sdf --model-name=test -x 0.0 -y 0.0 -z 0.2 &&
+gz model --spawn-file=/home/fei/coderepo/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/iris_pendulum/iris_pendulum.sdf --model-name=test -x 0.0 -y 0.0 -z 0.2 &&
 sleep 1
 gzclient
 

@@ -2,6 +2,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <gazebo_msgs/LinkStates.h>
 #include <mavros_msgs/State.h>
+#include <geometry_msgs/WrenchStamped.h>
 // #include <mavros_msgs/ActuatorControl.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float64.h>
@@ -19,6 +20,9 @@
 #include "rtwtypes.h"
 #include <cstddef>
 #include <cstdlib>
+
+# include <Eigen/Core>
+# include <iostream>
 
 // ------------------------------------------------------------------------------------------------------------------
 
@@ -48,6 +52,27 @@ mavros_msgs::State current_state;
 void state_cb(const mavros_msgs::State::ConstPtr& msg){
     current_state = *msg;
 }
+
+geometry_msgs::WrenchStamped wrench0;
+void rotors_cb(const geometry_msgs::WrenchStamped::ConstPtr& msg) {
+    wrench0 = *msg;
+}
+
+geometry_msgs::WrenchStamped wrench1;
+void rotors_cb1(const geometry_msgs::WrenchStamped::ConstPtr& msg) {
+    wrench1 = *msg;
+}
+
+geometry_msgs::WrenchStamped wrench2;
+void rotors_cb2(const geometry_msgs::WrenchStamped::ConstPtr& msg) {
+    wrench2 = *msg;
+}
+
+geometry_msgs::WrenchStamped wrench3;
+void rotors_cb3(const geometry_msgs::WrenchStamped::ConstPtr& msg) {
+    wrench3 = *msg;
+}
+
 
 // ------------------------------------------------------------------------------------------
 
@@ -81,15 +106,15 @@ int main(int argc, char **argv){
 
 
   double dv[16] = {};
-  double dv2[6] = {3.162277660169037e+03,4.790583473550029e+03,3.470550719426292e+03,1.366677835196229e+03,3.240775203934431e+02,40.597475793291565};
-  // double dv2[6] = {10.0000,   30.6980,   42.1184,   34.8025,   18.6387,    6.1869};
+  // double dv2[6] = {3.162277660169037e+03,4.790583473550029e+03,3.470550719426292e+03,1.366677835196229e+03,3.240775203934431e+02,40.597475793291565};
+  double dv2[6] = {100.0000,  262.0775,  293.4230,  167.1719,   57.6346,   11.6305};
   double controller_output[4] = {};
   double controller_output1[4] = {};
-  double dv3[7] = {1.535,0.15,1, 9.8066,0.0306,0.0306,0.0576};
+  double dv3[7] = {1.55,0.15,1, 9.8066,0.0306,0.0306,0.0576};
   double dv1[2] = {10,5.4772};
   // double dv1[2] = {2.2361,    3.0777};
-  double point[3] = {1, 1, -10};
-  double TParam[4] = {8, 3, 1.5, 0.5};
+  double point[3] = {0, 0, -10};
+  double TParam[4] = {16, 3, 1.5, 0.5};
 	// ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped> ("/mavros/local_position/pose", 50, current_position_cb);
 	ros::Subscriber gazebo_state_sub = nh.subscribe<gazebo_msgs::LinkStates>
             ("gazebo/link_states", 50, gazebo_state_cb);
@@ -99,6 +124,17 @@ int main(int argc, char **argv){
   ros::Publisher sls_state_publish = nh.advertise<offb_control::slsStates> ("/offb_control/slsStates", 1000);
   ros::Publisher actu0_publish = nh.advertise<offb_control::ActuatorControl0> ("/offb_control/ActuatorControl0", 1000);
   ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>("mavros/state", 100, state_cb);
+  ros::Subscriber rotor_thrust = nh.subscribe<geometry_msgs::WrenchStamped>("/force_torque/rotor0", 30, rotors_cb);
+  ros::Subscriber rotor_thrust1 = nh.subscribe<geometry_msgs::WrenchStamped>("/force_torque/rotor1", 30, rotors_cb1);
+  ros::Subscriber rotor_thrust2 = nh.subscribe<geometry_msgs::WrenchStamped>("/force_torque/rotor2", 30, rotors_cb2);
+  ros::Subscriber rotor_thrust3 = nh.subscribe<geometry_msgs::WrenchStamped>("/force_torque/rotor3", 30, rotors_cb3);
+
+  Eigen::Matrix4d KK;
+  KK <<    -0.2200,    0.2000,    0.2200,   -0.2000,
+    0.1300,   -0.1300,    0.1300,   -0.1300,
+    0.0500,    0.0500,   -0.0500,   -0.0500,
+    1.0000,    1.0000,    1.0000,    1.0000;
+
   ros::Rate rate(500);
 
 	// ros::spin();
@@ -152,10 +188,17 @@ int main(int argc, char **argv){
         // ********************************************************************************************************
         // Quasi Control
         // ********************************************************************************************************
-        actu0.controls[0] = saturate<double>(controller_output[1]/12, -1, 1);
-        actu0.controls[1] = saturate<double>(controller_output[2]/10, -1, 1);
-        actu0.controls[2] = saturate<double>(controller_output[3]/12, -1, 1);
-        actu0.controls[3] = (controller_output[0]-16.35)/200 + 0.747;
+        actu0.controls[0] = saturate<double>(controller_output[1]/(1.8383), -1, 1);
+        actu0.controls[1] = saturate<double>(controller_output[2]/(1.8383), -1, 1);
+        // actu0.controls[2] = saturate<double>(controller_output[3]/(190910*1), -1, 1);
+        actu0.controls[2] = saturate<double>(controller_output[3]/(190910), -1, 1);
+        actu0.controls[3] = (controller_output[0]-16.67122)/20 + 0.8168;
+        Eigen::Vector4d UU(wrench0.wrench.force.z, wrench1.wrench.force.z, wrench2.wrench.force.z, wrench3.wrench.force.z);
+        Eigen::Vector4d UU0(controller_output[1], controller_output[2], controller_output[3], controller_output[0]);
+        // std::cout<<"Diff:" << KK*UU - UU0 << std::endl;
+
+        // std::cout<<"Quasi:"<< controller_output[0] <<std::endl<< "Rotor:" << 4*wrench0.wrench.force.z << std::endl <<
+        // "difference:" << controller_output[0] - 4*wrench0.wrench.force.z << std::endl;
         // ********************************************************************************************************
         // ********************************************************************************************************
         // actu0.controls[0] = saturate<double>(controller_output[1]/12, -1, 1);
@@ -270,3 +313,6 @@ PendulumAngles ToPenAngles(double Lx,double Ly,double Lz) { //x=base.x
 
     return angles;
 }
+
+
+

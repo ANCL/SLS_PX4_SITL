@@ -47,6 +47,14 @@ option(SEND_ODOMETRY_DATA "Send Mavlink ODOMETRY msgs" OFF)
 find_package(Boost 1.58 REQUIRED COMPONENTS system thread filesystem)
 find_package(gazebo REQUIRED)
 find_package(PkgConfig REQUIRED)
+
+
+## Zifei Add for ros plugin to report thrusts
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+)
+
+
 pkg_search_module(GLIB REQUIRED glib-2.0)
 # Note: If using catkin, Python 2 is found since it points
 # to the Python libs installed with the ROS distro
@@ -127,6 +135,14 @@ if (CATKIN_DEVEL_PREFIX)
 else()
   message(STATUS "catkin DISABLED")
 endif()
+
+## Zifei
+# catkin_package(
+#   DEPENDS
+#     roscpp
+#     gazebo_ros
+# )
+
 
 # XXX this approach is extremely error prone
 # it would be preferable to either depend on the
@@ -375,6 +391,11 @@ add_library(gazebo_usv_dynamics_plugin SHARED src/gazebo_usv_dynamics_plugin.cpp
 add_library(gazebo_parachute_plugin SHARED src/gazebo_parachute_plugin.cpp)
 add_library(gazebo_airship_dynamics_plugin SHARED src/gazebo_airship_dynamics_plugin.cpp)
 add_library(gazebo_drop_plugin SHARED src/gazebo_drop_plugin.cpp)
+
+## Zifei
+# add_library(hello_world SHARED src/hello_world.cc)
+# target_link_libraries(gazebo_motor_model ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+
 
 set(plugins
   gazebo_airspeed_plugin

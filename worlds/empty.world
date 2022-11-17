@@ -33,5 +33,6 @@
       <real_time_update_rate>250</real_time_update_rate>
       <magnetic_field>6.0e-6 2.3e-5 -4.2e-5</magnetic_field>
     </physics>
+    <plugin name="hello_world" filename="libhello_world.so"/>
   </world>
 </sdf>
