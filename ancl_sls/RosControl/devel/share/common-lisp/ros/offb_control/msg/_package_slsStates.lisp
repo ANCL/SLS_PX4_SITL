@@ -3,4 +3,6 @@
           HEADER
           SLS_STATES-VAL
           SLS_STATES
+          REF_STATES-VAL
+          REF_STATES
 ))

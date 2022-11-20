@@ -31,3 +31,6 @@ models/standard_vtol_drop/standard_vtol_drop.sdf
 models/tailsitter/tailsitter.sdf
 
 ancl_sls/RosControl/.vscode
+models/iris/iris.sdf copy
+models/iris/iris0.sdf_copy
+models/iris/old files/iris0.sdf_copy

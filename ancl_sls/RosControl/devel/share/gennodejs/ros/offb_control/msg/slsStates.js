@@ -21,6 +21,7 @@ class slsStates {
       // initObj === null is a special case for deserialization where we don't initialize fields
       this.header = null;
       this.sls_states = null;
+      this.ref_states = null;
     }
     else {
       if (initObj.hasOwnProperty('header')) {
@@ -35,6 +36,12 @@ class slsStates {
       else {
         this.sls_states = new Array(16).fill(0);
       }
+      if (initObj.hasOwnProperty('ref_states')) {
+        this.ref_states = initObj.ref_states
+      }
+      else {
+        this.ref_states = new Array(4).fill(0);
+      }
     }
   }
 
@@ -48,6 +55,12 @@ class slsStates {
     }
     // Serialize message field [sls_states]
     bufferOffset = _arraySerializer.float64(obj.sls_states, buffer, bufferOffset, 16);
+    // Check that the constant length array field [ref_states] has the right length
+    if (obj.ref_states.length !== 4) {
+      throw new Error('Unable to serialize array field ref_states - length must be 4')
+    }
+    // Serialize message field [ref_states]
+    bufferOffset = _arraySerializer.float64(obj.ref_states, buffer, bufferOffset, 4);
     return bufferOffset;
   }
 
@@ -59,13 +72,15 @@ class slsStates {
     data.header = std_msgs.msg.Header.deserialize(buffer, bufferOffset);
     // Deserialize message field [sls_states]
     data.sls_states = _arrayDeserializer.float64(buffer, bufferOffset, 16)
+    // Deserialize message field [ref_states]
+    data.ref_states = _arrayDeserializer.float64(buffer, bufferOffset, 4)
     return data;
   }
 
   static getMessageSize(object) {
     let length = 0;
     length += std_msgs.msg.Header.getMessageSize(object.header);
-    return length + 128;
+    return length + 160;
   }
 
   static datatype() {
@@ -75,7 +90,7 @@ class slsStates {
 
   static md5sum() {
     //Returns md5sum for a message object
-    return 'f3e31fbaa1359dc8029965f13b7710fe';
+    return '7d89c16ac09a0000784fb21fb6327492';
   }
 
   static messageDefinition() {
@@ -84,6 +99,7 @@ class slsStates {
     #sls_state
     std_msgs/Header header
     float64[16] sls_states
+    float64[4] ref_states
     
     ================================================================================
     MSG: std_msgs/Header
@@ -122,6 +138,13 @@ class slsStates {
     }
     else {
       resolved.sls_states = new Array(16).fill(0)
+    }
+
+    if (msg.ref_states !== undefined) {
+      resolved.ref_states = msg.ref_states;
+    }
+    else {
+      resolved.ref_states = new Array(4).fill(0)
     }
 
     return resolved;

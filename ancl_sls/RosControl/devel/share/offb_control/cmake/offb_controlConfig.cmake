@@ -67,14 +67,14 @@ set(offb_control_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("TRUE" STREQUAL "TRUE")
-  set(offb_control_SOURCE_PREFIX /src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/src/offb_control)
-  set(offb_control_DEVEL_PREFIX /src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel)
+  set(offb_control_SOURCE_PREFIX /home/fei/coderepo/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/src/offb_control)
+  set(offb_control_DEVEL_PREFIX /home/fei/coderepo/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel)
   set(offb_control_INSTALL_PREFIX "")
   set(offb_control_PREFIX ${offb_control_DEVEL_PREFIX})
 else()
   set(offb_control_SOURCE_PREFIX "")
   set(offb_control_DEVEL_PREFIX "")
-  set(offb_control_INSTALL_PREFIX /src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/install)
+  set(offb_control_INSTALL_PREFIX /home/fei/coderepo/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/install)
   set(offb_control_PREFIX ${offb_control_INSTALL_PREFIX})
 endif()
 
@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(offb_control_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "/src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/include " STREQUAL " ")
+if(NOT "/home/fei/coderepo/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/include " STREQUAL " ")
   set(offb_control_INCLUDE_DIRS "")
-  set(_include_dirs "/src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/include")
+  set(_include_dirs "/home/fei/coderepo/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/include")
   if(NOT " " STREQUAL " ")
     set(_report "Check the issue tracker '' and consider creating a ticket if the problem has not been reported yet.")
   elseif(NOT " " STREQUAL " ")
@@ -110,7 +110,7 @@ if(NOT "/src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/include "
         message(FATAL_ERROR "Project 'offb_control' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  ${_report}")
       endif()
     else()
-      message(FATAL_ERROR "Project 'offb_control' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/src/offb_control/${idir}'.  ${_report}")
+      message(FATAL_ERROR "Project 'offb_control' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/fei/coderepo/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/src/offb_control/${idir}'.  ${_report}")
     endif()
     _list_append_unique(offb_control_INCLUDE_DIRS ${include})
   endforeach()
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/lib;/src/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/lib;/opt/ros/melodic/lib)
+    foreach(path /home/fei/coderepo/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/lib;/home/fei/coderepo/PX4-Autopilot/Tools/sitl_gazebo/ancl_sls/RosControl/devel/lib;/opt/ros/noetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
@@ -185,7 +185,7 @@ foreach(t ${offb_control_EXPORTED_TARGETS})
   endif()
 endforeach()
 
-set(depends "geometry_msgs;macros;roscpp;message_runtime")
+set(depends "geometry_msgs;macros;roscpp;message_runtime;gazebo_ros")
 foreach(depend ${depends})
   string(REPLACE " " ";" depend_list ${depend})
   # the package name of the dependency must be kept in a unique variable so that it is not overwritten in recursive calls
@@ -211,7 +211,7 @@ foreach(depend ${depends})
   _unpack_libraries_with_build_configuration(offb_control_LIBRARIES ${offb_control_LIBRARIES})
 
   _list_append_unique(offb_control_LIBRARY_DIRS ${${offb_control_dep}_LIBRARY_DIRS})
-  list(APPEND offb_control_EXPORTED_TARGETS ${${offb_control_dep}_EXPORTED_TARGETS})
+  _list_append_deduplicate(offb_control_EXPORTED_TARGETS ${${offb_control_dep}_EXPORTED_TARGETS})
 endforeach()
 
 set(pkg_cfg_extras "offb_control-msg-extras.cmake")

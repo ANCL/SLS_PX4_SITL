@@ -8,7 +8,7 @@
 
 #include <string>
 #include <vector>
-#include <map>
+#include <memory>
 
 #include <ros/types.h>
 #include <ros/serialization.h>
@@ -26,14 +26,20 @@ struct slsStates_
 
   slsStates_()
     : header()
-    , sls_states()  {
+    , sls_states()
+    , ref_states()  {
       sls_states.assign(0.0);
+
+      ref_states.assign(0.0);
   }
   slsStates_(const ContainerAllocator& _alloc)
     : header(_alloc)
-    , sls_states()  {
+    , sls_states()
+    , ref_states()  {
   (void)_alloc;
       sls_states.assign(0.0);
+
+      ref_states.assign(0.0);
   }
 
 
@@ -43,6 +49,9 @@ struct slsStates_
 
    typedef boost::array<double, 16>  _sls_states_type;
   _sls_states_type sls_states;
+
+   typedef boost::array<double, 4>  _ref_states_type;
+  _ref_states_type ref_states;
 
 
 
@@ -74,7 +83,8 @@ template<typename ContainerAllocator1, typename ContainerAllocator2>
 bool operator==(const ::offb_control::slsStates_<ContainerAllocator1> & lhs, const ::offb_control::slsStates_<ContainerAllocator2> & rhs)
 {
   return lhs.header == rhs.header &&
-    lhs.sls_states == rhs.sls_states;
+    lhs.sls_states == rhs.sls_states &&
+    lhs.ref_states == rhs.ref_states;
 }
 
 template<typename ContainerAllocator1, typename ContainerAllocator2>
@@ -96,16 +106,6 @@ namespace message_traits
 
 
 template <class ContainerAllocator>
-struct IsFixedSize< ::offb_control::slsStates_<ContainerAllocator> >
-  : FalseType
-  { };
-
-template <class ContainerAllocator>
-struct IsFixedSize< ::offb_control::slsStates_<ContainerAllocator> const>
-  : FalseType
-  { };
-
-template <class ContainerAllocator>
 struct IsMessage< ::offb_control::slsStates_<ContainerAllocator> >
   : TrueType
   { };
@@ -113,6 +113,16 @@ struct IsMessage< ::offb_control::slsStates_<ContainerAllocator> >
 template <class ContainerAllocator>
 struct IsMessage< ::offb_control::slsStates_<ContainerAllocator> const>
   : TrueType
+  { };
+
+template <class ContainerAllocator>
+struct IsFixedSize< ::offb_control::slsStates_<ContainerAllocator> >
+  : FalseType
+  { };
+
+template <class ContainerAllocator>
+struct IsFixedSize< ::offb_control::slsStates_<ContainerAllocator> const>
+  : FalseType
   { };
 
 template <class ContainerAllocator>
@@ -131,12 +141,12 @@ struct MD5Sum< ::offb_control::slsStates_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "f3e31fbaa1359dc8029965f13b7710fe";
+    return "7d89c16ac09a0000784fb21fb6327492";
   }
 
   static const char* value(const ::offb_control::slsStates_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0xf3e31fbaa1359dc8ULL;
-  static const uint64_t static_value2 = 0x029965f13b7710feULL;
+  static const uint64_t static_value1 = 0x7d89c16ac09a0000ULL;
+  static const uint64_t static_value2 = 0x784fb21fb6327492ULL;
 };
 
 template<class ContainerAllocator>
@@ -158,6 +168,7 @@ struct Definition< ::offb_control::slsStates_<ContainerAllocator> >
     return "#sls_state\n"
 "std_msgs/Header header\n"
 "float64[16] sls_states\n"
+"float64[4] ref_states\n"
 "\n"
 "================================================================================\n"
 "MSG: std_msgs/Header\n"
@@ -194,6 +205,7 @@ namespace serialization
     {
       stream.next(m.header);
       stream.next(m.sls_states);
+      stream.next(m.ref_states);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -220,6 +232,12 @@ struct Printer< ::offb_control::slsStates_<ContainerAllocator> >
     {
       s << indent << "  sls_states[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.sls_states[i]);
+    }
+    s << indent << "ref_states[]" << std::endl;
+    for (size_t i = 0; i < v.ref_states.size(); ++i)
+    {
+      s << indent << "  ref_states[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.ref_states[i]);
     }
   }
 };
