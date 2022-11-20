@@ -16,17 +16,19 @@
 
 (defclass offb_control::slsStates
   :super ros::object
-  :slots (_header _sls_states ))
+  :slots (_header _sls_states _ref_states ))
 
 (defmethod offb_control::slsStates
   (:init
    (&key
     ((:header __header) (instance std_msgs::Header :init))
     ((:sls_states __sls_states) (make-array 16 :initial-element 0.0 :element-type :float))
+    ((:ref_states __ref_states) (make-array 4 :initial-element 0.0 :element-type :float))
     )
    (send-super :init)
    (setq _header __header)
    (setq _sls_states __sls_states)
+   (setq _ref_states __ref_states)
    self)
   (:header
    (&rest __header)
@@ -38,6 +40,9 @@
   (:sls_states
    (&optional __sls_states)
    (if __sls_states (setq _sls_states __sls_states)) _sls_states)
+  (:ref_states
+   (&optional __ref_states)
+   (if __ref_states (setq _ref_states __ref_states)) _ref_states)
   (:serialization-length
    ()
    (+
@@ -45,6 +50,8 @@
     (send _header :serialization-length)
     ;; float64[16] _sls_states
     (* 8    16)
+    ;; float64[4] _ref_states
+    (* 8    4)
     ))
   (:serialize
    (&optional strm)
@@ -56,6 +63,10 @@
      (dotimes (i 16)
        (sys::poke (elt _sls_states i) (send s :buffer) (send s :count) :double) (incf (stream-count s) 8)
        )
+     ;; float64[4] _ref_states
+     (dotimes (i 4)
+       (sys::poke (elt _ref_states i) (send s :buffer) (send s :count) :double) (incf (stream-count s) 8)
+       )
      ;;
      (if (null strm) (get-output-stream-string s))))
   (:deserialize
@@ -66,16 +77,21 @@
    (dotimes (i (length _sls_states))
      (setf (elt _sls_states i) (sys::peek buf ptr- :double)) (incf ptr- 8)
      )
+   ;; float64[4] _ref_states
+   (dotimes (i (length _ref_states))
+     (setf (elt _ref_states i) (sys::peek buf ptr- :double)) (incf ptr- 8)
+     )
    ;;
    self)
   )
 
-(setf (get offb_control::slsStates :md5sum-) "f3e31fbaa1359dc8029965f13b7710fe")
+(setf (get offb_control::slsStates :md5sum-) "7d89c16ac09a0000784fb21fb6327492")
 (setf (get offb_control::slsStates :datatype-) "offb_control/slsStates")
 (setf (get offb_control::slsStates :definition-)
       "#sls_state
 std_msgs/Header header
 float64[16] sls_states
+float64[4] ref_states
 
 ================================================================================
 MSG: std_msgs/Header
@@ -97,6 +113,6 @@ string frame_id
 
 
 
-(provide :offb_control/slsStates "f3e31fbaa1359dc8029965f13b7710fe")
+(provide :offb_control/slsStates "7d89c16ac09a0000784fb21fb6327492")
 
 

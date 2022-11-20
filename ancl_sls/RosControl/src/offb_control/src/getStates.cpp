@@ -144,6 +144,8 @@ int main(int argc, char **argv){
   actu0.group_mix = 0;
 
   double t0 = 0;
+  double t65 = 0;
+  double tref = 0;
 
 	while(ros::ok()){
         slsStatesPub.sls_states[0] = sls_state1.x;
@@ -162,6 +164,12 @@ int main(int argc, char **argv){
         slsStatesPub.sls_states[13] = sls_state1.omega_1;
         slsStatesPub.sls_states[14] = sls_state1.omega_2;
         slsStatesPub.sls_states[15] = sls_state1.omega_3;
+        tref = ros::Time::now().toSec()-t0;
+        t65 = 6.2831853071795862 * tref / TParam[0];
+        slsStatesPub.ref_states[0] = TParam[1] * std::sin(t65);
+        t65 = 12.566370614359172 * tref / TParam[0];
+        slsStatesPub.ref_states[1] = TParam[2] * std::sin(t65);
+        slsStatesPub.ref_states[2] = TParam[3] * std::sin(t65) + -10.0;
         sls_state_publish.publish(slsStatesPub);
         for (int i=0;i<16; i++){
           dv[i] = slsStatesPub.sls_states[i];
@@ -171,8 +179,8 @@ int main(int argc, char **argv){
           t0 = ros::Time::now().toSec();
         }
         // ROS_INFO_STREAM( "First: "<< controller_output[0] << "\n");
-        main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
-        // QuasiControllerTrack( dv, ros::Time::now().toSec()-t0,dv1, dv2 , dv3, TParam,controller_output);
+        // main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
+        QuasiControllerTrack( dv, ros::Time::now().toSec()-t0,dv1, dv2 , dv3, TParam,controller_output);
         // ROS_INFO_STREAM("time: " << ros::Time::now().toSec()-t0 );
         // FullLin1Control(dv, point, controller_output1);
         // ROS_INFO_STREAM("LQR: " << controller_output1[0] << "  " << controller_output1[1] << "  " << controller_output1[2] << "  " << controller_output1[3] << "\n");

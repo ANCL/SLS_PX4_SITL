@@ -9,12 +9,13 @@ import struct
 import std_msgs.msg
 
 class slsStates(genpy.Message):
-  _md5sum = "f3e31fbaa1359dc8029965f13b7710fe"
+  _md5sum = "7d89c16ac09a0000784fb21fb6327492"
   _type = "offb_control/slsStates"
   _has_header = True  # flag to mark the presence of a Header object
   _full_text = """#sls_state
 std_msgs/Header header
 float64[16] sls_states
+float64[4] ref_states
 
 ================================================================================
 MSG: std_msgs/Header
@@ -32,8 +33,8 @@ time stamp
 #Frame this data is associated with
 string frame_id
 """
-  __slots__ = ['header','sls_states']
-  _slot_types = ['std_msgs/Header','float64[16]']
+  __slots__ = ['header','sls_states','ref_states']
+  _slot_types = ['std_msgs/Header','float64[16]','float64[4]']
 
   def __init__(self, *args, **kwds):
     """
@@ -43,7 +44,7 @@ string frame_id
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       header,sls_states
+       header,sls_states,ref_states
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -56,9 +57,12 @@ string frame_id
         self.header = std_msgs.msg.Header()
       if self.sls_states is None:
         self.sls_states = [0.] * 16
+      if self.ref_states is None:
+        self.ref_states = [0.] * 4
     else:
       self.header = std_msgs.msg.Header()
       self.sls_states = [0.] * 16
+      self.ref_states = [0.] * 4
 
   def _get_types(self):
     """
@@ -81,6 +85,7 @@ string frame_id
         length = len(_x)
       buff.write(struct.Struct('<I%ss'%length).pack(length, _x))
       buff.write(_get_struct_16d().pack(*self.sls_states))
+      buff.write(_get_struct_4d().pack(*self.ref_states))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -111,6 +116,9 @@ string frame_id
       start = end
       end += 128
       self.sls_states = _get_struct_16d().unpack(str[start:end])
+      start = end
+      end += 32
+      self.ref_states = _get_struct_4d().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -132,6 +140,7 @@ string frame_id
         length = len(_x)
       buff.write(struct.Struct('<I%ss'%length).pack(length, _x))
       buff.write(self.sls_states.tostring())
+      buff.write(self.ref_states.tostring())
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -163,6 +172,9 @@ string frame_id
       start = end
       end += 128
       self.sls_states = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=16)
+      start = end
+      end += 32
+      self.ref_states = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=4)
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -183,3 +195,9 @@ def _get_struct_3I():
     if _struct_3I is None:
         _struct_3I = struct.Struct("<3I")
     return _struct_3I
+_struct_4d = None
+def _get_struct_4d():
+    global _struct_4d
+    if _struct_4d is None:
+        _struct_4d = struct.Struct("<4d")
+    return _struct_4d
