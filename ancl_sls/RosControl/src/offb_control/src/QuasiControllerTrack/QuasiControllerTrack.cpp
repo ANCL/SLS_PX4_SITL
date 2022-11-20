@@ -788,11 +788,7 @@ void QuasiControllerTrack(const double x[16], double t, const double Kv2[2],
   yr[9] = -64.0 * TParam[2] * 31.006276680299816 / t342 * t65;
   yr[10] = 256.0 * TParam[2] * 97.409091034002415 / t262 * b_yr_tmp;
   yr[11] = 1024.0 * TParam[2] * 306.01968478528141 / t388 * t65;
-<<<<<<< HEAD
-  yr[12] = TParam[3] * yr_tmp + -9.5;
-=======
   yr[12] = TParam[3] * yr_tmp + -10.0;
->>>>>>> tmp
   yr[13] = 2.0 * TParam[3] * 3.1415926535897931 / TParam[0] * t27;
   yr[14] = -4.0 * TParam[3] * 9.869604401089358 / t6 * yr_tmp;
   yr[15] = -8.0 * TParam[3] * 31.006276680299816 / t342 * t27;
