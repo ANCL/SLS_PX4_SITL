@@ -114,7 +114,7 @@ int main(int argc, char **argv){
   double dv1[2] = {10,5.4772};
   // double dv1[2] = {2.2361,    3.0777};
   double point[3] = {0, 0, -10};
-  double TParam[4] = {16, 3, 1.5, 0.5};
+  double TParam[4] = {8, 3, 1.5, 0.5};
 	// ros::Subscriber position_state_sub = nh.subscribe<geometry_msgs::PoseStamped> ("/mavros/local_position/pose", 50, current_position_cb);
 	ros::Subscriber gazebo_state_sub = nh.subscribe<gazebo_msgs::LinkStates>
             ("gazebo/link_states", 50, gazebo_state_cb);
@@ -180,8 +180,8 @@ int main(int argc, char **argv){
           // ROS_INFO_STREAM(t0);
         }
         // ROS_INFO_STREAM( "First: "<< controller_output[0] << "\n");
-        // main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
-        QuasiControllerTrack( dv, ros::Time::now().toSec()-t0,dv1, dv2 , dv3, TParam,controller_output);
+        main_QuasiController( dv, dv2, controller_output, dv3, dv1, point);
+        // QuasiControllerTrack( dv, ros::Time::now().toSec()-t0,dv1, dv2 , dv3, TParam,controller_output);
         // ROS_INFO_STREAM("time: " << ros::Time::now().toSec()-t0 );
         // FullLin1Control(dv, point, controller_output1);
         // ROS_INFO_STREAM("LQR: " << controller_output1[0] << "  " << controller_output1[1] << "  " << controller_output1[2] << "  " << controller_output1[3] << "\n");
@@ -200,7 +200,7 @@ int main(int argc, char **argv){
         actu0.controls[0] = saturate<double>(controller_output[1]/(1.8383), -1, 1);
         actu0.controls[1] = saturate<double>(controller_output[2]/(1.8383), -1, 1);
         // actu0.controls[2] = saturate<double>(controller_output[3]/(190910*1), -1, 1);
-        actu0.controls[2] = saturate<double>(controller_output[3]/(190910), -1, 1);
+        actu0.controls[2] = saturate<double>(controller_output[3]/(0.9546), -1, 1);
         actu0.controls[3] = (controller_output[0]-16.67122)/20 + 0.8168;
         Eigen::Vector4d UU(wrench0.wrench.force.z, wrench1.wrench.force.z, wrench2.wrench.force.z, wrench3.wrench.force.z);
         Eigen::Vector4d UU0(controller_output[1], controller_output[2], controller_output[3], controller_output[0]);
