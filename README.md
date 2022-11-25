@@ -1,7 +1,7 @@
 # Quasi-static state feedback output tracking]{Quasi-static state feedback  output tracking for a  slung load system : PX4 SITL validation
 
 
-This repo contains the simulation code for the JINT journal submission **'Quasi-static state feedback output tracking]{Quasi-static state feedback  output tracking for a  slung load system : PX4 SITL validation'**. 
+This repo contains the simulation code for the JINT journal submission **'Quasi-static state feedback  output tracking for a  slung load system : PX4 SITL validation'**. 
 
 The code simulates a slung load system with a multirotor UAV running the [PX4 autopilot firmware](https://px4.io/). **SITL** (*Software in the loop*) is combined with the [Gazebo](https://github.com/gazebosim/gazebo-classic) simulator. The reason for using SITL simulation is to test controller performance using actual PX4 firmware. This ensures the controller is implementable on-board physical autopilots (e.g. Pixhawk 1, etc.) and that simulation results are closer to what are observed in flight testing. 
 
