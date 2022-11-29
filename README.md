@@ -1,4 +1,4 @@
-# Quasi-static state feedback output tracking]{Quasi-static state feedback  output tracking for a  slung load system : PX4 SITL validation
+# Quasi-static state feedback  output tracking for a slung load system : PX4 SITL validation
 
 
 This repo contains the simulation code for the JINT journal submission **'Quasi-static state feedback  output tracking for a  slung load system : PX4 SITL validation'**. 
