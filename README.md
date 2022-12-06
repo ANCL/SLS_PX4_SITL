@@ -19,7 +19,7 @@ The code simulates a slung load system with a multirotor UAV running the [PX4 au
 
 1. In order to compile the PX4 code for SITL and and start jMAVSim:
 
-```make posix_sitl_default gazebo no_sim=1```
+```make px4_sitl_default gazebo no_sim=1```
 
 When the build is successful, JMAVSim and the PXH shel are launched. In the terminal you should see
 
