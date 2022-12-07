@@ -14,7 +14,7 @@ The code simulates a slung load system with a multirotor UAV running the [PX4 au
 3. SLS Model SDF File: [iris_pendulum](./ancl_sls/iris_pendulum/)
 
 ## Docker Image
-A docker image is provided [DockerHub](https://hub.docker.com/repository/docker/zifeifei/quisijint). The PX4 code and gazebo simulation code is at 
+A docker image is provided [DockerHub](https://hub.docker.com/repository/docker/zifeifei/quasijint). The PX4 code and gazebo simulation code is at 
 ```/src/PX4-Autopilot``` and ```/src/PX4-Autopilot/Tools/sitl_gazebo/``` respectively.
 
 ## Usage
