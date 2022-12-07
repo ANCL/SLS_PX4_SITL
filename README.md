@@ -9,7 +9,7 @@ The code simulates a slung load system with a multirotor UAV running the [PX4 au
 
 1. Folder containing the module which implements the quasi-static controller: [RosControl](./ancl_sls/RosControl/)
 
-2. For installing and running PX4-Gazebo simulator, please refers to: [PX4 Gazebo Plugin Suite for MAVLink SITL and HITL](https://github.com/PX4/PX4-SITL_gazebo)
+2. For installing and running PX4-Gazebo simulator, please refer to: [PX4 Gazebo Plugin Suite for MAVLink SITL and HITL](https://github.com/PX4/PX4-SITL_gazebo)
 
 3. SLS Model SDF File: [iris_pendulum](./ancl_sls/iris_pendulum/)
 
