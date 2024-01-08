@@ -21,7 +21,7 @@ A docker image is provided [DockerHub](https://hub.docker.com/repository/docker/
 
 ### Running the SITL/Gazebo Simulation
 
-1. In order to compile the PX4 code for SITL and and start jMAVSim:
+1. In order to compile the PX4 code for SITL:
 
 ```make px4_sitl_default gazebo no_sim=1```
 
