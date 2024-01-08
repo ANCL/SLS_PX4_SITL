@@ -1,0 +1,12 @@
+function xdot=FullQuasi1(t,x,Kv2,Kv6,M)
+m=1.6;mp=0.16;L=1;
+G=10;J__1=0.03;J__2=0.03;J__3=0.03;
+TParam = [16, 3, 1.5, 0.5]; %T = 16;r1 = 3; r2 = 1.5; r3=0.5;
+controller_output = QuasiControllerTrack(x,t,Kv2,Kv6,M,TParam);
+
+F = [x(9); x(10); x(11); x(12); x(13); (sin(x(6)) * sin(x(7)) * x(15) + cos(x(6)) * sin(x(7)) * x(16) + x(14) * cos(x(7))) / cos(x(7)); cos(x(6)) * x(15) - sin(x(6)) * x(16); (sin(x(6)) * x(15) + cos(x(6)) * x(16)) / cos(x(7)); -L * sin(x(5)) * m * (cos(x(5)) ^ 2 * x(12) ^ 2 + x(13) ^ 2) / (m + mp); sin(x(4)) * cos(x(5)) * m * (cos(x(5)) ^ 2 * x(12) ^ 2 + x(13) ^ 2) * L / (m + mp); 0.1e1 / (m + mp) * (-L * cos(x(5)) ^ 3 * cos(x(4)) * m * x(12) ^ 2 - L * cos(x(4)) * cos(x(5)) * m * x(13) ^ 2 + G * m + G * mp); 0.2e1 * x(13) * x(12) * sin(x(5)) / cos(x(5)); -x(12) ^ 2 * cos(x(5)) * sin(x(5)); -x(15) * x(16) * (J__2 - J__3) / J__1; x(14) * x(16) * (J__1 - J__3) / J__2; -x(14) * x(15) * (J__1 - J__2) / J__3;];
+
+G0 = [0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; (sin(x(4)) * sin(x(5)) * cos(x(5)) * cos(x(6)) * sin(x(7)) * sin(x(8)) - sin(x(4)) * sin(x(5)) * cos(x(5)) * cos(x(8)) * sin(x(6)) - sin(x(5)) * cos(x(5)) * cos(x(4)) * cos(x(6)) * cos(x(7)) + cos(x(5)) ^ 2 * cos(x(6)) * sin(x(7)) * cos(x(8)) + cos(x(5)) ^ 2 * sin(x(6)) * sin(x(8)) - cos(x(6)) * sin(x(7)) * cos(x(8)) - sin(x(6)) * sin(x(8))) / (m + mp) 0 0 0; 0.1e1 / (m + mp) * cos(x(5)) * (cos(x(5)) * cos(x(4)) ^ 2 * cos(x(6)) * sin(x(7)) * sin(x(8)) + sin(x(4)) * sin(x(5)) * cos(x(6)) * sin(x(7)) * cos(x(8)) + sin(x(4)) * cos(x(5)) * cos(x(4)) * cos(x(6)) * cos(x(7)) - cos(x(5)) * cos(x(4)) ^ 2 * cos(x(8)) * sin(x(6)) + sin(x(4)) * sin(x(5)) * sin(x(8)) * sin(x(6)) - cos(x(5)) * cos(x(6)) * sin(x(7)) * sin(x(8)) + cos(x(5)) * cos(x(8)) * sin(x(6))) 0 0 0; 0.1e1 / (m + mp) * cos(x(5)) * cos(x(4)) * (sin(x(4)) * cos(x(5)) * cos(x(6)) * sin(x(7)) * sin(x(8)) - sin(x(4)) * cos(x(5)) * cos(x(8)) * sin(x(6)) - sin(x(5)) * cos(x(6)) * sin(x(7)) * cos(x(8)) - cos(x(5)) * cos(x(4)) * cos(x(6)) * cos(x(7)) - sin(x(5)) * sin(x(8)) * sin(x(6))) 0 0 0; (-cos(x(4)) * cos(x(6)) * sin(x(7)) * sin(x(8)) + cos(x(4)) * cos(x(8)) * sin(x(6)) - sin(x(4)) * cos(x(6)) * cos(x(7))) / L / cos(x(5)) / m 0 0 0; (((cos(x(6)) * sin(x(7)) * sin(x(8)) - sin(x(6)) * cos(x(8))) * sin(x(4)) - cos(x(7)) * cos(x(4)) * cos(x(6))) * sin(x(5)) + cos(x(5)) * (cos(x(6)) * sin(x(7)) * cos(x(8)) + sin(x(6)) * sin(x(8)))) / m / L 0 0 0; 0 0.1e1 / J__1 0 0; 0 0 0.1e1 / J__2 0; 0 0 0 0.1e1 / J__3;];
+
+xdot=F + G0*(controller_output);
+end
