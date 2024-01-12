@@ -1,15 +1,15 @@
 clc;clear;
 %%
 %Reference trajecotry
-T = 16; t = linspace(0,10*T,1000);
-T = 16;r1 = 3; r2 = 1.5; r3=0.5;
-TParam = [100,3,1.5,0.5];
-p1r = r1*sin(2*pi*t/T);
+T = 8; t = linspace(0,10*T,1000);
+T = 8; r1 = 3; r2 = 1.5; r3=2;
+TParam = [T, r1, r2, r3];
+p1r = r1*sin(2*pi*t/T) + 1;
 p2r = r2*sin(4*pi*t/T);
-p3r = -9 + r3*sin(2*pi*t/T);
+p3r = -4 + r3*sin(2*pi*t/T);
 
 %translational 
-p1_0 = 1;  p2_0 = 1; p3_0 = -9; 
+p1_0 = 1;  p2_0 = 1; p3_0 = -4; 
 % v1_0 = r1*2*pi/T;  v2_0 = r2*4*pi/T; v3_0 = r3*2*pi/T;
 v1_0 = 0;  v2_0 = 0; v3_0 = 0;
 

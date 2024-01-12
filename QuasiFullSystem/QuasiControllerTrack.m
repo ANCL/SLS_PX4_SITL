@@ -5,9 +5,9 @@ m0=M(1);mp0=M(2);L0=M(3);
 Ts1 = [x(3) x(11)];
 T0 = TParam(1);r1 = TParam(2); r2 = TParam(3); r3= TParam(4);
 
-yr = [r1 * sin((2 * pi * t / T0)) 0.2e1 * r1 * pi / T0 * cos((2 * pi * t / T0)) -0.4e1 * r1 * (pi ^ 2) / (T0 ^ 2) * sin((2 * pi * t / T0)) -0.8e1 * r1 * (pi ^ 3) / (T0 ^ 3) * cos((2 * pi * t / T0)) 0.16e2 * r1 * (pi ^ 4) / (T0 ^ 4) * sin((2 * pi * t / T0)) 0.32e2 * r1 * (pi ^ 5) / (T0 ^ 5) * cos((2 * pi * t / T0)) r2 * sin((4 * pi * t / T0)) 0.4e1 * r2 * pi / T0 * cos((4 * pi * t / T0)) -0.16e2 * r2 * (pi ^ 2) / (T0 ^ 2) * sin((4 * pi * t / T0)) -0.64e2 * r2 * (pi ^ 3) / (T0 ^ 3) * cos((4 * pi * t / T0)) 0.256e3 * r2 * (pi ^ 4) / (T0 ^ 4) * sin((4 * pi * t / T0)) 0.1024e4 * r2 * (pi ^ 5) / (T0 ^ 5) * cos((4 * pi * t / T0)) -0.90e1 + r3 * sin((2 * pi * t / T0)) 0.2e1 * r3 * pi / T0 * cos((2 * pi * t / T0)) -0.4e1 * r3 * (pi ^ 2) / (T0 ^ 2) * sin((2 * pi * t / T0)) -0.8e1 * r3 * (pi ^ 3) / (T0 ^ 3) * cos((2 * pi * t / T0)) 0.16e2 * r3 * (pi ^ 4) / (T0 ^ 4) * sin((2 * pi * t / T0)) 0.32e2 * r3 * (pi ^ 5) / (T0 ^ 5) * cos((2 * pi * t / T0)) 0.2e-1 * t 0.2e-1];
+yr = [0.30e1 * sin(pi * t / 0.4e1) + 0.1e1 0.7500000000e0 * pi * cos(pi * t / 0.4e1) -0.1875000000e0 * pi ^ 2 * sin(pi * t / 0.4e1) -0.4687500000e-1 * pi ^ 3 * cos(pi * t / 0.4e1) 0.1171875000e-1 * pi ^ 4 * sin(pi * t / 0.4e1) 0.2929687500e-2 * pi ^ 5 * cos(pi * t / 0.4e1) 0.150e1 * sin(pi * t / 0.2e1) 0.7500000000e0 * pi * cos(pi * t / 0.2e1) -0.3750000000e0 * pi ^ 2 * sin(pi * t / 0.2e1) -0.1875000000e0 * pi ^ 3 * cos(pi * t / 0.2e1) 0.9375000000e-1 * pi ^ 4 * sin(pi * t / 0.2e1) 0.4687500000e-1 * pi ^ 5 * cos(pi * t / 0.2e1) -0.4e1 + 0.2e1 * sin(pi * t / 0.4e1) pi * cos(pi * t / 0.4e1) / 0.2e1 -pi ^ 2 * sin(pi * t / 0.4e1) / 0.8e1 -pi ^ 3 * cos(pi * t / 0.4e1) / 0.32e2 pi ^ 4 * sin(pi * t / 0.4e1) / 0.128e3 pi ^ 5 * cos(pi * t / 0.4e1) / 0.512e3 0.2e-1 * t 0.2e-1];
 
-yr6 = [-0.64e2 * r1 * (pi ^ 6) / (T0 ^ 6) * sin((2 * pi * t / T0)) -0.4096e4 * r2 * (pi ^ 6) / (T0 ^ 6) * sin((4 * pi * t / T0)) -0.64e2 * r3 * (pi ^ 6) / (T0 ^ 6) * sin((2 * pi * t / T0))];
+yr6 = [-0.7324218750e-3 * pi ^ 6 * sin(pi * t / 0.4e1) -0.2343750000e-1 * pi ^ 6 * sin(pi * t / 0.2e1) -pi ^ 6 * sin(pi * t / 0.4e1) / 0.2048e4];
 
 n3 = yr(15) - Kv2(1,2)*(Ts1(2)-yr(14)) - Kv2(1,1)*(Ts1(1)-yr(13));
 n3p = yr(16)- Kv2(1,2)*(n3-yr(15)) - Kv2(1,1)*(Ts1(2)-yr(14));
